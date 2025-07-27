@@ -9,12 +9,15 @@ The course emphasizes practical applications in geotechnical engineering, from s
 ## Course Structure
 
 ### Module 1: Foundations of Machine Learning in Geotechnical Engineering
+
 **[00a-classification](docs/00a-classification/)** - Introduction to Classification Problems
 - Traditional geotechnical classification using Decision Trees, Random Forest, and XGBoost
 - Earthquake-induced liquefaction prediction with SHAP explainability
 - Real-world geotechnical dataset analysis and feature importance
 
-**[00b-mlp-classification](docs/00b-mlp-classification/)** - Multi-Layer Perceptrons for Geotechnical Applications
+**[00b-mlp-classification](docs/00b-mlp-classification/)** 
+
+- Multi-Layer Perceptrons for Geotechnical Applications
 - From perceptrons to deep neural networks: theoretical foundations
 - Universal Approximation Theorem and Sobolev spaces
 - Activation functions, gradient descent, and automatic differentiation
@@ -22,6 +25,7 @@ The course emphasizes practical applications in geotechnical engineering, from s
 - Comparison with traditional methods and feature importance analysis
 
 ### Module 2: Physics-Informed Neural Networks for Geotechnical Problems
+
 **[01-pinn](docs/01-pinn/)** - Physics-Informed Neural Networks Introduction
 - **1D Consolidation Problems**: Complete introduction using Terzaghi's consolidation equation
 - Why standard neural networks fail for physics problems
@@ -61,27 +65,32 @@ This course is specifically designed for:
 
 ## Key Features
 
-### 🏗️ **Geotechnical Engineering Focus**
+### **Geotechnical Engineering Focus**
+
 - Real-world problems: liquefaction prediction, consolidation analysis, soil classification
 - Industry-relevant datasets and case studies
 - Connection to practical engineering applications and design decisions
 
-### 🧠 **Progressive Learning Approach**
+### **Progressive Learning Approach**
+
 - **Start Simple**: Traditional ML methods (Decision Trees, Random Forest)
 - **Build Foundation**: Neural networks with theoretical rigor (Universal Approximation Theorem)
 - **Advanced Applications**: Physics-Informed Neural Networks for PDEs
 
-### 🔬 **Strong Theoretical Foundation**
+### **Strong Theoretical Foundation**
+
 - Mathematical rigor with Sobolev spaces and functional analysis
 - Clear derivations from first principles
 - Understanding of when and why methods work
 
-### 💻 **Hands-On Implementation**
+### **Hands-On Implementation**
+
 - Complete Jupyter notebooks with detailed explanations
 - PyTorch implementations optimized for geotechnical problems
 - Automatic differentiation and modern optimization techniques
 
-### 📊 **Comprehensive Comparisons**
+###  **Comprehensive Comparisons**
+
 - Traditional methods vs neural networks
 - Data-driven vs physics-informed approaches
 - Performance analysis and engineering validation
@@ -89,6 +98,7 @@ This course is specifically designed for:
 ## Prerequisites
 
 ### **Essential Background**
+
 - **Geotechnical Engineering**: Soil mechanics, consolidation theory, foundation engineering basics
 - **Mathematics**: Calculus (derivatives, integrals), linear algebra basics, differential equations
 - **Programming**: Basic Python programming experience
@@ -103,18 +113,21 @@ This course is specifically designed for:
 After completing this course, participants will have:
 
 ### **Practical Skills**
+
 - ✅ Implemented complete ML pipelines for geotechnical classification problems
 - ✅ Built neural networks from scratch with theoretical understanding
 - ✅ Solved PDEs using Physics-Informed Neural Networks
 - ✅ Applied automatic differentiation to geotechnical problems
 
 ### **Theoretical Understanding**
+
 - ✅ Universal Approximation Theorem and its extensions to PDEs
 - ✅ Sobolev spaces and their role in scientific machine learning
 - ✅ Physics-informed training strategies and loss function design
 - ✅ When to use AI vs traditional methods in geotechnical engineering
 
 ### **Professional Capabilities**
+
 - ✅ Evaluate and implement AI solutions for geotechnical problems
 - ✅ Integrate sparse field measurements with physics-based models
 - ✅ Communicate AI approach benefits and limitations to engineering teams
@@ -136,13 +149,16 @@ After completing this course, participants will have:
    ```
 
 2. **Start with Module 1**
+
    - Begin with `docs/00a-classification/` for traditional ML approaches
    - Progress to `docs/00b-mlp-classification/` for neural network foundations
 
 3. **Advance to PINNs**
+
    - Work through `docs/01-pinn/1d-consolidation-pinns.ipynb` for physics-informed approaches
 
 4. **Use Google Colab Links**
+
    - Each notebook includes direct Colab links for immediate execution
    - No local setup required - run everything in the cloud
 
