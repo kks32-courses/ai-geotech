@@ -148,4 +148,4 @@ After completing this course, participants will have:
 
 ---
 
-> **Note**: This course focuses specifically on geotechnical applications of Scientific Machine Learning. For broader SciML topics, see the main [UT Portugal SciML course](https://github.com/kks32-courses/ut-portugal-sciml).
+> **Note**: This course focuses specifically on geotechnical applications of Scientific Machine Learning. For broader SciML topics, see the main [SciML course](https://chishiki-ai.org/sciml).
