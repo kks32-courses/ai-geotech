@@ -1,0 +1,431 @@
+/* Enable right sidebar for TOC */
+.md-sidebar--secondary {
+  display: block !important;
+  width: 12rem !important;
+}
+
+.md-content {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+.md-main__inner {
+  max-width: none !important;
+}
+
+.md-grid {
+  max-width: none !important;
+}
+
+/* Adjust the main content area to use full width */
+.md-main {
+  flex-grow: 1;
+}
+
+.md-content__inner {
+  margin: 0 !important;
+  max-width: none !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+/* Remove padding and adjust margins on smaller screens */
+@media screen and (max-width: 76.25em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+@media screen and (max-width: 60em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+@media screen and (max-width: 48em) {
+  .md-content {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  .md-content__inner {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+}
+
+/* Ensure the article takes full width within content area */
+article.md-content__inner {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Adjust container spacing */
+.md-container {
+  max-width: none !important;
+}
+
+/* Make sure tables and code blocks can use full width */
+.md-content table,
+.md-content pre,
+.md-content .highlight {
+  max-width: 100% !important;
+}
+
+/* Mobile code block improvements */
+@media screen and (max-width: 60em) {
+  .md-content pre,
+  .md-content .highlight,
+  .md-content .codehilite,
+  .jp-Cell .jp-InputArea,
+  .jp-Cell .jp-OutputArea {
+    overflow-x: auto !important;
+    white-space: pre !important;
+    word-wrap: normal !important;
+    word-break: normal !important;
+  }
+  
+  .md-content pre code,
+  .md-content .highlight code,
+  .jp-InputArea .jp-InputPrompt + .jp-RenderedHTMLCommon,
+  .jp-Cell .jp-CodeMirrorEditor .CodeMirror {
+    white-space: pre !important;
+    word-wrap: normal !important;
+    overflow-x: auto !important;
+  }
+  
+  /* Ensure code doesn't wrap */
+  .md-content code {
+    white-space: nowrap !important;
+  }
+  
+  /* Allow horizontal scrolling for jupyter cells */
+  .jp-Cell {
+    overflow-x: auto !important;
+  }
+  
+  .jp-InputArea,
+  .jp-OutputArea {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+  
+  .jp-Cell .jp-InputArea .jp-RenderedHTMLCommon,
+  .jp-Cell .jp-OutputArea .jp-RenderedHTMLCommon {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+}
+
+/* Remove line number padding on mobile/tablet */
+.jp-InputArea .jp-InputPrompt,
+.jp-OutputArea .jp-OutputPrompt {
+  display: none !important;
+}
+
+/* Fix code block styling */
+.md-content .highlight,
+.md-content pre {
+  background-color: var(--md-code-bg-color) !important;
+}
+
+.md-content .highlight pre,
+.md-content .codehilite pre {
+  background-color: transparent !important;
+}
+
+/* Override any dark theme code blocks */
+.jp-Cell .jp-InputArea .jp-InputPrompt,
+.jp-Cell .jp-OutputArea .jp-OutputPrompt {
+  background-color: transparent !important;
+}
+
+.jp-RenderedHTMLCommon pre,
+.jp-RenderedHTML pre {
+  background-color: var(--md-code-bg-color) !important;
+  color: var(--md-code-fg-color) !important;
+}
+
+/* Ensure code blocks follow Material theme */
+.codehilite,
+.highlight {
+  background-color: var(--md-code-bg-color) !important;
+}
+
+/* Improve Jupyter notebook cell separation and styling */
+.jp-Cell {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Only style code input areas, not markdown cells */
+.jp-Cell.jp-CodeCell .jp-InputArea {
+  background-color: var(--md-code-bg-color) !important;
+  border-radius: 0.25rem !important;
+  margin-bottom: 1rem !important;
+  border: 1px solid var(--md-default-fg-color--lightest) !important;
+}
+
+/* Keep markdown cells clean with no background */
+.jp-Cell.jp-MarkdownCell .jp-InputArea {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.jp-OutputArea {
+  background-color: var(--md-default-bg-color) !important;
+  border-radius: 0.25rem !important;
+  padding: 1rem !important;
+  border: 1px solid var(--md-accent-fg-color--transparent) !important;
+  margin-top: 0.5rem !important;
+}
+
+.jp-OutputArea-output {
+  background-color: transparent !important;
+}
+
+/* Style input and output prompts differently */
+.jp-InputPrompt {
+  background-color: var(--md-primary-fg-color) !important;
+  color: var(--md-primary-bg-color) !important;
+  font-weight: 600 !important;
+}
+
+.jp-OutputPrompt {
+  background-color: var(--md-accent-fg-color) !important;
+  color: var(--md-primary-bg-color) !important;
+  font-weight: 600 !important;
+}
+
+/* Remove "Made with Material for MkDocs" footer text */
+.md-footer-meta__inner {
+  display: none !important;
+}
+
+/* Make headings bolder and reduce spacing */
+.md-content h1,
+.md-content h2,
+.md-content h3,
+.md-content h4,
+.md-content h5,
+.md-content h6 {
+  font-weight: 700 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.md-content h1 {
+  font-weight: 800 !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.md-content h2 {
+  font-weight: 750 !important;
+  margin-top: 1.25rem !important;
+  margin-bottom: 0.875rem !important;
+}
+
+/* Reduce left sidebar width */
+.md-sidebar--primary {
+  width: 12rem !important;
+}
+
+/* Adjust content margin to match sidebar width */
+.md-content {
+  margin-left: 1rem !important;
+  margin-right: 1rem !important;
+}
+
+/* Style the integrated TOC in left sidebar */
+.md-nav--integrated .md-nav__item {
+  margin-bottom: 0.25rem;
+}
+
+.md-nav--integrated .md-nav__link {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+.md-nav--integrated .md-nav__item--active > .md-nav__link {
+  color: var(--md-accent-fg-color);
+  font-weight: 500;
+}
+
+/* Desktop layout - adaptive width based on right sidebar presence */
+@media screen and (min-width: 76.25em) {
+  /* Default: both sidebars visible */
+  .md-content {
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+    width: calc(100% - 2rem) !important;
+  }
+  
+  .md-sidebar--secondary {
+    display: block !important;
+  }
+  
+  /* If right sidebar has no content, use full width */
+  .md-sidebar--secondary:empty + .md-content,
+  .md-sidebar--secondary .md-nav__list:empty ~ * .md-content {
+    margin-right: 1rem !important;
+    width: calc(100% - 1rem) !important;
+  }
+  
+  .md-main__inner {
+    max-width: none !important;
+  }
+  
+  .md-grid {
+    max-width: none !important;
+  }
+}
+
+/* Hide right sidebar on mobile/tablet */
+@media screen and (max-width: 76.25em) {
+  .md-sidebar--secondary {
+    display: none !important;
+  }
+}
+
+/* Print styles for PDF generation and browser printing */
+@media print {
+  /* Hide all navigation elements */
+  .md-header,
+  .md-sidebar,
+  .md-sidebar--primary,
+  .md-sidebar--secondary,
+  .md-footer,
+  .md-nav,
+  .md-tabs {
+    display: none !important;
+  }
+  
+  /* Use full page width for content */
+  .md-main,
+  .md-main__inner,
+  .md-content,
+  .md-content__inner {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Remove margins and ensure full width */
+  .md-grid {
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  /* Optimize content spacing for print */
+  article.md-content__inner {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 1rem !important;
+    width: 100% !important;
+  }
+  
+  /* Improve typography for print */
+  body {
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    background: #fff !important;
+  }
+  
+  /* Ensure headings look good in print */
+  h1 {
+    color: #000 !important;
+    page-break-before: always !important;
+    page-break-after: avoid !important;
+    margin-top: 0 !important;
+    margin-bottom: 1em !important;
+    padding-top: 2em !important;
+  }
+  
+  h2 {
+    color: #000 !important;
+    page-break-before: auto !important;
+    page-break-after: avoid !important;
+    margin-top: 1.5em !important;
+    margin-bottom: 0.75em !important;
+  }
+  
+  h3, h4, h5, h6 {
+    color: #000 !important;
+    page-break-after: avoid !important;
+    margin-top: 1em !important;
+    margin-bottom: 0.5em !important;
+  }
+  
+  /* Optimize code blocks for print */
+  pre, code {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid !important;
+    font-size: 9pt !important;
+  }
+  
+  /* Handle Jupyter notebook cells for print */
+  .jp-Cell {
+    page-break-inside: avoid !important;
+    margin-bottom: 1em !important;
+  }
+  
+  .jp-InputArea,
+  .jp-OutputArea {
+    border: 1px solid #ddd !important;
+    margin: 0.5em 0 !important;
+    padding: 0.5em !important;
+    background: #fafafa !important;
+  }
+  
+  /* Remove any box shadows and unnecessary styling */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Optimize images for print */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Ensure tables fit on page */
+  table {
+    font-size: 9pt !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+  
+  th, td {
+    border: 1px solid #ddd !important;
+    padding: 0.25em !important;
+  }
+  
+  /* Page break optimization */
+  p, blockquote, ul, ol, dl {
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+  
+  blockquote, ul, ol, dl {
+    page-break-inside: avoid !important;
+  }
+}

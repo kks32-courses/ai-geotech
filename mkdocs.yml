@@ -1,0 +1,123 @@
+site_name: AI in Geotechnical Engineering
+site_author: Krishna Kumar
+site_description: Course materials for AI in Geotechnical Engineering
+site_url: https://github.com/kks32-courses/ai-geotech
+repo_url: https://github.com/kks32-courses/ai-geotech
+use_directory_urls: false
+repo_name: SciML Course Repo
+
+theme:
+  name: material
+  logo: chishiki.png
+  favicon: chishiki.png
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.indexes
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    - announce.dismiss
+  
+  icon:
+    repo: fontawesome/brands/github
+  
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+      ignore_h1_titles: true
+      show_input: true
+      theme: light
+  - git-revision-date-localized:
+      type: date
+  
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: "🔗"
+  
+  # Python Markdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js
+  - javascripts/katex.js
+  - javascripts/adaptive-width.js
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Classification: 
+    - Decision Tree: 00-mlp-dtree/00a-classification.ipynb
+    - MLP: 00-mlp-dtree/00b-mlp-classification.ipynb
+    - Activation Function ReLU: 00-mlp-dtree/relu.md
+    - Automatic Differentiation: 00-mlp-dtree/ad.md
+    - Gradient Descent: 00-mlp-dtree/sgd.md
+  - PINNs:
+    - PINNs oscillator: 01-pinn/pinn.ipynb
+    - PINNs 1D consolidation: 01-pinn/1d-consolidation-pinns.ipynb
+    - PINNs 1D consolidation [L-BFGS]: 01-pinn/1d-consolidation-pinns-lbfgs.ipynb
+
+copyright: |
+  &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>
