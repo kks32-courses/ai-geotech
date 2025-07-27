@@ -6,6 +6,9 @@ A comprehensive course designed to introduce geotechnical engineers and scientis
 
 The course emphasizes practical applications in geotechnical engineering, from soil classification and liquefaction prediction to solving complex consolidation problems and parameter identification. Participants will gain hands-on experience with industry-standard tools including Python, PyTorch, and modern scientific computing libraries.
 
+
+**Slides:** [![View PDF](https://img.shields.io/badge/View-PDF-red?style=flat-square&logo=googledocs&logoColor=white)](https://github.com/kks32-courses/ai-geotech/raw/main/docs/2025-AI-Geotech.pdf)
+
 ## Course Structure
 
 ### Module 1: Foundations of Machine Learning in Geotechnical Engineering
