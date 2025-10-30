@@ -35,17 +35,18 @@
 \renewcommand{\figurename}{Fig.}
 \usepackage{caption,subcaption}% http://ctan.org/pkg/{caption,subcaption}
 \usepackage{xcolor}
+\usepackage{verbatim} % for verbatim environment
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
-\title[Exploratory Data Analysis]{Exploratory Data Analysis for Liquefaction Assessment}
-\author{Krishna Kumar}
+\title[Exploratory Data Analysis]{Exploratory Data Analysis}
+\author{Krishna Kumar \& Ellen Rathje}
 \institute[UT Austin]
 {
 University of Texas at Austin \\
 \medskip
-\textit{\url{krishnak@utexas.edu}}
+%\textit{\url{krishnak@utexas.edu}}
 }
 \date{}
 
@@ -85,33 +86,6 @@ University of Texas at Austin \\
 \vspace{3cm}
 }
 
-\vspace{1em}
-
-\textbf{Gilbert Strang's approach:} \\
-\textit{"See the structure first, then calculate."}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Liquefaction and Lateral Spreading}
-
-\textbf{Physical process:}
-\begin{enumerate}
-\item Earthquake shaking
-\item Pore pressure increases
-\item Effective stress drops: $\sigma' = \sigma - u$
-\item Soil loses strength
-\item Lateral displacement occurs
-\end{enumerate}
-
-\vspace{1em}
-
-\textbf{Dataset:} Durante \& Rathje (2021)
-\begin{itemize}
-\item 7,291 case histories
-\item Target: >0.3m displacement = spreading
-\end{itemize}
 
 \end{frame}
 
@@ -121,6 +95,13 @@ University of Texas at Austin \\
 %------------------------------------------------
 \begin{frame}
 \frametitle{The Key Question}
+
+\textbf{Dataset:} Durante \& Rathje (2021)
+\begin{itemize}
+	\item 7,291 case histories
+	\item Target: $>0.3 m$ displacement = spreading
+\end{itemize}
+
 
 \textbf{Can we distinguish spreading from non-spreading sites?}
 
@@ -218,7 +199,7 @@ University of Texas at Austin \\
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Quartiles for Engineering Decisions}
+\frametitle{Quartiles for Engineering Decisions: What do these numbers mean?}
 
 \textbf{Example: Ground Water Depth (GWD)}
 
@@ -234,8 +215,8 @@ From our data:
 \textbf{Engineering interpretation:}
 \begin{itemize}
 \item 50\% of sites: water table at 1.64-2.46 m depth
-\item Sites with GWD < Q1 (1.64 m): \textbf{High risk} zone
-\item Sites with GWD > Q3 (2.46 m): \textbf{Lower risk} zone
+\item Sites with GWD $<$ Q1 (1.64 m): \textbf{High risk} zone
+\item Sites with GWD $>$ Q3 (2.46 m): \textbf{Lower risk} zone
 \end{itemize}
 
 \vspace{0.5em}
@@ -307,12 +288,54 @@ From our data:
 
 \vspace{0.5em}
 
-\textbf{Advantages:}
+\textbf{What's a good outlier percentage?}
 \begin{itemize}
-\item Works for any distribution shape
-\item Not fooled by outliers themselves
-\item Easy to explain to engineers
+\item 1-5\%: Excellent - typical for clean data
+\item 5-10\%: Good - acceptable natural variability
+\item $>$10\%: Investigate - may indicate data quality issues
 \end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{IQR Results for Our Dataset}
+
+\textbf{Outlier analysis using IQR method:}
+
+\mode<beamer>{
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Feature} & \textbf{IQR} & \textbf{Outliers} & \textbf{\%} & \textbf{Assessment} \\
+\midrule
+GWD & 0.82 m & 133 & 1.8\% & Excellent \\
+L & 0.99 km & 8 & 0.1\% &  Excellent \\
+Slope & 0.95\% & 542 & 7.4\% &  Good \\
+PGA & 0.06 g & 3 & 0.0\% &  Excellent \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Analysis:}
+\begin{enumerate}
+\item \textbf{GWD (1.8\%):} Valid extreme water table depths → Keep
+\item \textbf{L (0.1\%):} Very few unusual distances → Keep
+\item \textbf{Slope (7.4\%):} Natural field variability → Keep
+\item \textbf{PGA (0.0\%):} Perfect - earthquake data well-controlled → Keep
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Decision:} All outliers $<$ 10\% and physically plausible → \textbf{Keep all data}
+
+\textit{Why?} Model needs to learn extreme events (major earthquakes, steep slopes)
 }
 \mode<handout>{
 \vspace{3cm}
@@ -349,75 +372,6 @@ z = \frac{x - \mu}{\sigma}
 \item 68\% within $\pm 1\sigma$
 \item 95\% within $\pm 2\sigma$
 \item 99.7\% within $\pm 3\sigma$
-\end{itemize}
-}
-\mode<handout>{
-\vspace{3cm}
-}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Use 1: Outlier Detection}
-
-\textbf{Example: Ground Water Depth}
-
-\mode<beamer>{
-Data: Mean $\mu = 2.08$ m, Std $\sigma = 0.64$ m
-
-\vspace{0.5em}
-
-\begin{tabular}{lcc}
-\toprule
-\textbf{Value} & \textbf{Z-score} & \textbf{Assessment} \\
-\midrule
-2.08 m & 0 & Average \\
-2.72 m & 1 & Normal \\
-3.36 m & 2 & Unusual \\
-6.00 m & 6.13 & \textbf{Outlier!} \\
-\bottomrule
-\end{tabular}
-
-\vspace{0.5em}
-
-\textbf{Threshold:} $|z| > 3$ for outliers
-}
-\mode<handout>{
-\vspace{3cm}
-}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Use 2: Standardization (More Important!)}
-
-\textbf{Problem:} Features have different scales
-\begin{itemize}
-\item GWD: 0.4 - 6.0 m
-\item PGA: 0.3 - 0.6 g
-\end{itemize}
-
-\vspace{1em}
-
-\textbf{Solution:} Standardize using z-scores
-
-\mode<beamer>{
-Transform each feature:
-\begin{equation*}
-x_{\text{standardized}} = \frac{x - \mu}{\sigma}
-\end{equation*}
-
-\textbf{Result:} All features have mean = 0, std = 1
-
-\vspace{1em}
-
-\textbf{Why this matters for ML:}
-\begin{itemize}
-\item Neural networks train better
-\item Distance-based methods (KNN, SVM) need equal scales
-\item Prevents large-value features from dominating
 \end{itemize}
 }
 \mode<handout>{
@@ -490,31 +444,110 @@ Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Statistical Significance Testing}
+\frametitle{Mann-Whitney U Test }
 
 \textbf{Question:} Are distributions truly different, or just random chance?
 
 \mode<beamer>{
-\textbf{Mann-Whitney U Test:}
+\textbf{What is U?} U counts the ``wins'' - how often one group beats the other.
+
+\vspace{0.5em}
+
+\textbf{The Algorithm (3Blue1Brown style):}
+\begin{enumerate}
+\item \textbf{Mix all values} from both groups together
+\item \textbf{Rank them} from smallest to largest (1, 2, 3, ...)
+\item \textbf{Sum ranks} for each group
+\item \textbf{Calculate U:} How often does spreading value < non-spreading value?
+\end{enumerate}
+
+\vspace{0.5em}
+
+\textbf{Why it's powerful:}
 \begin{itemize}
-\item Compares two distributions
-\item Non-parametric (no normality assumption)
-\item Returns p-value
+\item  No assumptions about distribution shape
+\item  Robust to outliers (uses ranks, not values)
+\item  Perfect for comparing two groups
 \end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Mann-Whitney U Test - Visual Example}
+
+\textbf{Example with GWD (Ground Water Depth):}
+
+\mode<beamer>{
+\begin{small}
+\texttt{All sites mixed and ranked by GWD:} \\[0.3em]
+\texttt{Spreading sites:~~~~~[1.2] [1.5] [1.8] ...} \\
+\texttt{~~~~~~~~~~~~~~~~~~~~~$\downarrow$~~~~~$\downarrow$~~~~~$\downarrow$} \\
+\texttt{~~~~~~~~~~~~~~~~~~~rank:1 rank:2 rank:3} \\[0.3em]
+\texttt{Non-spreading sites: [2.5] [3.0] [3.2] ...} \\
+\texttt{~~~~~~~~~~~~~~~~~~~~~$\downarrow$~~~~~$\downarrow$~~~~~$\downarrow$} \\
+\texttt{~~~~~~~~~~~~~~~~~~~rank:4 rank:5 rank:6} \\[0.3em]
+\texttt{$\rightarrow$ Spreading sites get LOWER ranks} \\
+\texttt{$\rightarrow$ They have shallower water tables!}
+\end{small}
+
+\vspace{0.5em}
+
+\textbf{The p-value answers:} \\
+``If groups were actually the same, what's the chance we'd see this much separation by random luck?''
+
+\begin{itemize}
+\item $p < 0.001$ $\rightarrow$ Less than 0.1\% chance $\rightarrow$ \textbf{Strong evidence!}
+\item $p > 0.05$ $\rightarrow$ More than 5\% chance $\rightarrow$ Could just be randomness
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Mann-Whitney Results for Our Data}
+
+\textbf{Statistical significance of each feature:}
+
+\mode<beamer>{
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Feature} & \textbf{p-value} & \textbf{Significant?} & \textbf{Conclusion} \\
+\midrule
+GWD & 4.76e-15 & *** & Strong predictor \\
+L & 4.90e-46 & *** & \textbf{Strongest} predictor \\
+Slope & 9.83e-02 & No & Weak predictor \\
+PGA & 1.35e-16 & *** & Strong predictor \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 \vspace{1em}
+
+\textbf{Key Insight:} \\
+\begin{itemize}
+\item \textbf{Slope is NOT significantly different} → May not help prediction!
+\item \textbf{GWD, L, PGA} show extremely low p-values → Key predictors
+\end{itemize}
+
+\vspace{0.5em}
 
 \textbf{P-value interpretation:}
 \begin{itemize}
-\item $p < 0.001$: Extremely significant (***)
-\item $p < 0.01$: Very significant (**)
-\item $p < 0.05$: Significant (*)
+\item $p < 0.001$: *** Extremely significant
+\item $p < 0.01$: ** Very significant
+\item $p < 0.05$: * Significant
 \item $p \geq 0.05$: Not significant
 \end{itemize}
-
-\vspace{1em}
-
-\textbf{For our data:} GWD, PGA, and L are highly significant (p < 0.001)
 }
 \mode<handout>{
 \vspace{3cm}
@@ -536,7 +569,7 @@ Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
 \item \textbf{Missing values:}
   \begin{itemize}
   \item How many? Which features?
-  \item Delete (<5\%) or impute (>5\%)?
+  \item Delete ($<5\%$) or impute ($>5\%$)?
   \end{itemize}
 
 \item \textbf{Physical plausibility:}
@@ -561,151 +594,6 @@ Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
 \mode<handout>{
 \vspace{3cm}
 }
-
-\end{frame}
-
-%------------------------------------------------
-\section{Key Takeaways}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Essential Concepts}
-
-\textbf{Must-know statistical tools:}
-
-\mode<beamer>{
-\begin{enumerate}
-\item \textbf{Quartiles (Q1, Median, Q3):}
-  \begin{itemize}
-  \item Robust alternative to mean/std
-  \item IQR = middle 50\% of data
-  \end{itemize}
-
-\item \textbf{Z-scores:} $z = (x - \mu) / \sigma$
-  \begin{itemize}
-  \item Outlier detection: $|z| > 3$
-  \item Standardization for ML
-  \end{itemize}
-
-\item \textbf{Correlation:}
-  \begin{itemize}
-  \item Strength of linear relationship
-  \item Not causation!
-  \end{itemize}
-
-\item \textbf{Statistical tests:}
-  \begin{itemize}
-  \item Confirm differences aren't random
-  \item P-value < 0.05 = significant
-  \end{itemize}
-\end{enumerate}
-}
-\mode<handout>{
-\vspace{3cm}
-}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Insights from Liquefaction Data}
-
-\textbf{What we learned:}
-
-\mode<beamer>{
-\begin{enumerate}
-\item \textbf{Most important features:}
-  \begin{itemize}
-  \item GWD: Strong negative correlation
-  \item PGA: Strong positive correlation
-  \item L: Moderate negative correlation
-  \end{itemize}
-
-\item \textbf{Data quality:} Excellent
-  \begin{itemize}
-  \item No missing values
-  \item All values physically plausible
-  \item Minimal duplicates
-  \end{itemize}
-
-\item \textbf{Class balance:} ~60/40 split
-  \begin{itemize}
-  \item Reasonable balance
-  \item Use stratified sampling
-  \end{itemize}
-\end{enumerate}
-
-\vspace{1em}
-
-\textbf{Ready for machine learning!}
-}
-\mode<handout>{
-\vspace{3cm}
-}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{ML Modeling Strategy}
-
-\textbf{Based on EDA:}
-
-\mode<beamer>{
-\begin{enumerate}
-\item \textbf{Preprocessing:}
-  \begin{itemize}
-  \item Standardize (z-scores) for neural networks
-  \item Raw features for tree-based models
-  \item Stratified train-test split
-  \end{itemize}
-
-\item \textbf{Model selection:}
-  \begin{itemize}
-  \item Start with Random Forest (robust, interpretable)
-  \item Try XGBoost (often best performance)
-  \item Neural networks with standardized inputs
-  \end{itemize}
-
-\item \textbf{Evaluation metrics:}
-  \begin{itemize}
-  \item Multiple metrics: Accuracy, Precision, Recall, F1, AUC
-  \item Confusion matrix
-  \item Consider cost of errors in engineering context
-  \end{itemize}
-\end{enumerate}
-}
-\mode<handout>{
-\vspace{3cm}
-}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Words of Wisdom}
-
-\begin{center}
-\large
-
-\textit{"All models are wrong, but some are useful."} \\
-\vspace{0.3em}
---- George Box
-
-\vspace{2em}
-
-\textit{"See the structure first, then calculate."} \\
-\vspace{0.3em}
---- Gilbert Strang
-
-\vspace{2em}
-
-\textit{"Connect to the application - numbers must have physical meaning."}
-\end{center}
-
-\vspace{1em}
-
-\textbf{The goal is insight, not just numbers!}
 
 \end{frame}
 
@@ -781,13 +669,25 @@ Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
 \frametitle{Questions?}
 
 \centering
-\Large Thank you!
 
-\vspace{2cm}
 
+	\large
+	
+	\textit{"All models are wrong, but some are useful."} \\
+	\vspace{0.3em}
+	--- George Box
+	
+	\vspace{2em}
+	
+	\textit{"See the structure first, then calculate."} \\
+	\vspace{0.3em}
+	--- Gilbert Strang
+
+\vspace{2em}
+\normalsize
 \textbf{Contact:} \\
-Krishna Kumar \\
-\textit{krishnak@utexas.edu} \\
+Dr. Krishna Kumar [krishnak@utexas.edu]\\
+Dr. Ellen Rathje [rathje@mail.utexas.edu]\\
 University of Texas at Austin
 
 \vspace{1cm}
