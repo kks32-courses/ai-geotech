@@ -1,167 +1,129 @@
 # AI in Geotechnical Engineering
 
-> Krishna Kumar
+**Dr. Krishna Kumar and Dr. Ellen Rathje, University of Texas at Austin**
 
-A comprehensive course designed to introduce geotechnical engineers and scientists to the revolutionary field of Scientific Machine Learning (SciML). This course bridges traditional geotechnical engineering with cutting-edge AI techniques, focusing on solving real-world problems in soil mechanics, foundation engineering, and geotechnical modeling through Physics-Informed Neural Networks (PINNs) and advanced machine learning approaches.
+This 20-hour online course enables geotechnical professionals with practical AI skills. Participants master data processing, feature engineering, and core machine learning models for classification, regression, and clustering. The curriculum explores deep learning, including various neural networks (DNN, RNN, CNN), vital explainable AI (XAI) techniques and Large Language Models for geotechnical applications. Through hands-on exercises with industry tools, attendees tackle real-world geotechnical challenges, from site characterization to knowledge management. Participants will be equipped to apply AI to enhance analysis, improve decision-making, and drive innovation in geotechnics.
 
-The course emphasizes practical applications in geotechnical engineering, from soil classification and liquefaction prediction to solving complex consolidation problems and parameter identification. Participants will gain hands-on experience with industry-standard tools including Python, PyTorch, and modern scientific computing libraries.
+### Course Introduction Video
 
-## Course Structure
+[![Course Introduction](https://img.youtube.com/vi/vOO85acoXmQ/0.jpg)](https://youtu.be/vOO85acoXmQ?si=P6IXBZlIdp1TBgeh)
 
-### Module 1: Foundations of Machine Learning in Geotechnical Engineering
-
-**[00a-classification](docs/00a-classification/)** - Introduction to Classification Problems
-- Traditional geotechnical classification using Decision Trees, Random Forest, and XGBoost
-- Earthquake-induced liquefaction prediction with SHAP explainability
-- Real-world geotechnical dataset analysis and feature importance
-
-**[00b-mlp-classification](docs/00b-mlp-classification/)** 
-
-- Multi-Layer Perceptrons for Geotechnical Applications
-- From perceptrons to deep neural networks: theoretical foundations
-- Universal Approximation Theorem and Sobolev spaces
-- Activation functions, gradient descent, and automatic differentiation
-- Advanced MLP implementation for liquefaction classification
-- Comparison with traditional methods and feature importance analysis
-
-### Module 2: Physics-Informed Neural Networks for Geotechnical Problems
-
-**[01-pinn](docs/01-pinn/)** - Physics-Informed Neural Networks Introduction
-- **1D Consolidation Problems**: Complete introduction using Terzaghi's consolidation equation
-- Why standard neural networks fail for physics problems
-- Universal Approximation Theorem extension to PDEs and Sobolev spaces
-- Automatic differentiation for exact derivative computation
-- Multi-component loss functions: data, physics, boundary conditions, and initial conditions
-- Advanced training strategies (Adam + LBFGS optimization)
-- Engineering validation against analytical solutions
-
-### Course Objectives
-Upon completion of this course, participants will be able to:
-
-1. **Apply Machine Learning to Geotechnical Classification**: Implement and compare traditional ML methods (Decision Trees, Random Forest) with modern neural networks for geotechnical problems like liquefaction prediction.
-
-2. **Master Neural Network Fundamentals**: Understand MLPs from theoretical foundations (Universal Approximation Theorem) to practical implementation, with focus on geotechnical applications.
-
-3. **Solve PDEs with Physics-Informed Neural Networks**: Implement PINNs for fundamental geotechnical problems, starting with 1D consolidation and extending to complex boundary value problems.
-
-4. **Understand Theoretical Foundations**: Grasp the mathematical principles behind SciML, including Sobolev spaces, automatic differentiation, and physics-informed training strategies.
-
-5. **Compare Traditional vs AI Methods**: Critically evaluate when to use AI approaches versus traditional geotechnical methods, understanding advantages and limitations of each.
-
-6. **Handle Real Geotechnical Data**: Work with sparse, noisy field measurements typical in geotechnical engineering and learn to extract meaningful insights.
-
-### Target Audience
-This course is specifically designed for:
-
-- **Geotechnical Engineers**: Practicing professionals seeking to integrate AI/ML into foundation design, soil analysis, and geotechnical modeling workflows.
-
-- **Geotechnical Researchers**: Academics and graduate students working on computational geomechanics, soil behavior modeling, and geotechnical data analysis.
-
-- **Civil Engineering Professionals**: Engineers working in areas intersecting with geotechnical engineering (structural, environmental, earthquake engineering).
-
-- **Engineering Consultants**: Technical professionals in geotechnical consulting firms looking to modernize analysis capabilities and improve prediction accuracy.
-
-- **Data Scientists in Engineering**: ML practitioners interested in applying physics-informed approaches to engineering problems with solid theoretical foundations.
-
-## Key Features
-
-### **Geotechnical Engineering Focus**
-
-- Real-world problems: liquefaction prediction, consolidation analysis, soil classification
-- Industry-relevant datasets and case studies
-- Connection to practical engineering applications and design decisions
-
-### **Progressive Learning Approach**
-
-- **Start Simple**: Traditional ML methods (Decision Trees, Random Forest)
-- **Build Foundation**: Neural networks with theoretical rigor (Universal Approximation Theorem)
-- **Advanced Applications**: Physics-Informed Neural Networks for PDEs
-
-### **Strong Theoretical Foundation**
-
-- Mathematical rigor with Sobolev spaces and functional analysis
-- Clear derivations from first principles
-- Understanding of when and why methods work
-
-### **Hands-On Implementation**
-
-- Complete Jupyter notebooks with detailed explanations
-- PyTorch implementations optimized for geotechnical problems
-- Automatic differentiation and modern optimization techniques
-
-###  **Comprehensive Comparisons**
-
-- Traditional methods vs neural networks
-- Data-driven vs physics-informed approaches
-- Performance analysis and engineering validation
-
-## Prerequisites
-
-### **Essential Background**
-
-- **Geotechnical Engineering**: Soil mechanics, consolidation theory, foundation engineering basics
-- **Mathematics**: Calculus (derivatives, integrals), linear algebra basics, differential equations
-- **Programming**: Basic Python programming experience
-
-### **Helpful but Not Required**
-- Machine learning fundamentals
-- PyTorch or TensorFlow experience
-- Numerical methods background
+*Click the image above to watch the course introduction video*
 
 ## Learning Outcomes
 
-After completing this course, participants will have:
+Apply a range of machine learning and deep learning algorithms (including regression, classification, clustering, and various neural networks) to analyze and solve practical geotechnical engineering problems.
 
-### **Practical Skills**
+- Process, prepare, and engineer features from diverse geotechnical datasets (such as borehole logs, CPT/SPT data, lab tests, and time-series measurements) for effective AI model development.
 
-- ✅ Implemented complete ML pipelines for geotechnical classification problems
-- ✅ Built neural networks from scratch with theoretical understanding
-- ✅ Solved PDEs using Physics-Informed Neural Networks
-- ✅ Applied automatic differentiation to geotechnical problems
+- Develop, train, and evaluate predictive models for tasks such as soil classification, landslide susceptibility, site characterization, TBM performance optimization, and time-dependent behavior analysis.
 
-### **Theoretical Understanding**
+- Interpret complex AI model outputs using Explainable AI (XAI) techniques like SHAP and leverage "glass-box" models to enhance decision-making and build trust in AI-driven geotechnical solutions.
 
-- ✅ Universal Approximation Theorem and its extensions to PDEs
-- ✅ Sobolev spaces and their role in scientific machine learning
-- ✅ Physics-informed training strategies and loss function design
-- ✅ When to use AI vs traditional methods in geotechnical engineering
+- Implement advanced AI techniques, including Recurrent Neural Networks for time-series data, Large Language Models (LLMs) for knowledge management, and Convolutional/Graph Neural Networks for specialized geotechnical data analysis, while considering ethical implications and emerging trends.
 
-### **Professional Capabilities**
+## Day 1: October 30
 
-- ✅ Evaluate and implement AI solutions for geotechnical problems
-- ✅ Integrate sparse field measurements with physics-based models
-- ✅ Communicate AI approach benefits and limitations to engineering teams
-- ✅ Design custom neural network architectures for specific geotechnical applications
+### Module 1: Introduction, Data Processing, and Feature Engineering (10am-noon)
 
-## Technical Requirements
+**Theme:** Laying the groundwork for AI in geotechnics, from understanding data to preparing it for modeling.
 
-- **Google Colab** (recommended) or local Python environment
-- **Python 3.8+** with standard scientific computing libraries
-- **PyTorch** for neural network implementation
-- **Basic libraries**: NumPy, Matplotlib, Pandas, Scikit-learn
+**Presentations**
+- Introduction to AI/ML/DL in Geotechnical Engineering (30min)
+- Data Processing and Exploration (EDA, missing data, normalization)
+- Feature Engineering for Geotechnical Data
 
-## Getting Started
+**Demo examples:** Perform Exploratory Data Analysis (EDA) on borehole data and preprocess (clean) landslide data for modeling.
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/kks32-courses/ai-geotech.git
-   cd ai-geotech
-   ```
+### Module 2: Tree-based Supervised Classification Methods - Day 1 (1-3:30 pm)
 
-2. **Start with Module 1**
+**Theme:** Applying fundamental supervised learning algorithms for prediction tasks.
 
-   - Begin with `docs/00a-classification/` for traditional ML approaches
-   - Progress to `docs/00b-mlp-classification/` for neural network foundations
+**Presentations**
+- Decision Trees (DT)
+- Random Forests (RF)
+- XGBoost
+- Evaluation metrics
 
-3. **Advance to PINNs**
+**Hands-On:** Build a decision tree classifier for landslide susceptibility mapping and train a logistic regression model for soil type prediction.
 
-   - Work through `docs/01-pinn/1d-consolidation-pinns.ipynb` for physics-informed approaches
+### Module 3: Explainable AI (XAI) and Glass-Box Models - Day 1 (4-5 pm)
 
-4. **Use Google Colab Links**
+**Theme:** Understanding and interpreting complex AI models.
 
-   - Each notebook includes direct Colab links for immediate execution
-   - No local setup required - run everything in the cloud
+**Presentations**
+- The Importance of Explainability in Geotechnical AI
+- SHAP (SHapley Additive exPlanations)
+- Explainable Boosting Machines (EBM)
 
----
+**Hands-On:** Train a Random Forest model to predict landslides and interpret the results using SHAP values and feature importance.
 
-> **Note**: This course focuses specifically on geotechnical applications of Scientific Machine Learning. For broader SciML topics, see the main [SciML course](https://chishiki-ai.org/sciml).
+## Day 2: October 31
+
+### Module 4: Neural Networks - Introduction - Day 2 (8-9:30 am, 10-noon)
+
+**Theme:** Understanding the fundamental building blocks of deep learning models.
+
+**Presentations**
+- The Neuron and Network Architecture (Layers, Weights, Biases)
+- Common Activation Functions (Sigmoid, ReLU, Tanh etc.)
+- Loss Functions and Introduction to Training (Gradient Descent, Backpropagation overview)
+
+**Hands-On:** Build the architecture of a PyTorch Deep Neural Network (DNN).
+
+## Day 3: November 7
+
+### Module 5: Neural Networks - Applications - Day 3 (10-noon)
+
+**Theme:** Applying Deep Neural Networks (DNNs) to solve specific geotechnical engineering problems.
+
+**Presentations**
+- Optimizers (SGD, Adam) and Training Dynamics
+- Case Study: DNNs for TBM (Tunnel Boring Machine) Performance
+- Hyperparameter Tuning, Regularization, and Other Geotechnical Applications.
+- Train a DNN to predict TBM data using synthetic geology data, focusing on the training process and hyperparameter tuning.
+
+### Module 6: Convolutional Neural Networks - Day 3 (1-3 pm)
+
+**Theme:** Understanding and applying CNNs for image and spatial data in geotechnics.
+
+**Presentations**
+- CNN Architecture: Convolutional Layers, Pooling Layers
+- Applications: Image-based soil/rock classification, analysis of geophysical data.
+- Transfer Learning with CNNs.
+
+**Hands-On:** Train a PyTorch CNN to invert seismic waveforms (simplified example) or for rock fracture detection from provided images
+
+### Module 7: Clustering - Day 3 (3:30-5 pm)
+
+**Theme:** Using unsupervised learning for site profiling and layering.
+
+**Presentations**
+- Introduction to Unsupervised Learning and Clustering
+- K-Means, DBSCAN
+- PCA for Dimensionality Reduction and Visualization
+- Spectral Clustering
+
+**Hands-On:** Cluster soil layers from CPT/SPT data using SciKit-Learn and visualize the resulting 3D stratigraphy.
+
+## Day 4: November 8
+
+### Module 8: Large Language Models (LLMs) in Geotechnics - Day 4 (8-10 am)
+
+**Theme:** Leveraging LLMs for knowledge management and text-based tasks.
+
+**Presentations**
+- Introduction to LLMs and Transformers
+- Retrieval-Augmented Generation (RAG)
+- Geotechnical Applications (report analysis, Q&A on codes).
+
+**Hands-On:** Create a Q&A chatbot for geotechnical codes using HuggingFace Transformers and RAG principles.
+
+### Module 9: Advanced Topics & Future Outlook - Day 4 (10:30-noon)
+
+**Theme:** Exploring Graph Neural Networks, other advanced concepts, and the future of AI in Geotechnics.
+
+**Presentations**
+- Introduction to Graph Neural Networks (GNNs) - Concepts & Potential Applications.
+- Other Emerging AI Methods (e.g., Physics-Informed Neural Networks - PINNs).
+- Future Trends, Ethics, and Challenges in AI for Geotechnics.
