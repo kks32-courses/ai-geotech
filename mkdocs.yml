@@ -108,10 +108,11 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Classification: 
+  - Classification & Tree-based Methods: 
     - Data Analytics: 00-mlp-dtree/00-eda-liquefaction.ipynb
     - Decision Tree: 00-mlp-dtree/00a-classification.ipynb
     - EBM: 00-mlp-dtree/00b-ebm.ipynb
+  - Multi-Layer Perceptron:
     - MLP: 00-mlp-dtree/00b-mlp-classification.ipynb
     - Activation Function ReLU: 00-mlp-dtree/relu.md
     - Binary Cross Entropy: 00-mlp-dtree/bce.md
