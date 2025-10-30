@@ -1,0 +1,800 @@
+%**************************************************************************************
+% License:
+% CC BY-NC-SA 4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
+%**************************************************************************************
+
+\documentclass[notes]{beamer}
+
+\mode<presentation> {
+
+\usetheme{Madrid}
+
+% Burnt orange
+\definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+\colorlet{beamer@blendedblue}{burntorange}
+% Pale yellow
+\definecolor{paleyellow}{rgb}{1.0, 1.0, 0.953}
+\setbeamercolor{background canvas}{bg=white}
+% Secondary and tertiary palette
+\setbeamercolor*{palette secondary}{use=structure,fg=white,bg=burntorange!80!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=white,bg=burntorange!60!black}
+
+% To remove the navigation symbols from the bottom of all slides uncomment this line
+%\setbeamertemplate{navigation symbols}{}
+}
+
+\usepackage{amsmath}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\usepackage{bm}
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{breqn}
+\usepackage{cleveref}
+\usepackage{graphicx} % for figures
+\usepackage[labelsep=space,tableposition=top]{caption}
+\renewcommand{\figurename}{Fig.}
+\usepackage{caption,subcaption}% http://ctan.org/pkg/{caption,subcaption}
+\usepackage{xcolor}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\title[Exploratory Data Analysis]{Exploratory Data Analysis for Liquefaction Assessment}
+\author{Krishna Kumar}
+\institute[UT Austin]
+{
+University of Texas at Austin \\
+\medskip
+\textit{\url{krishnak@utexas.edu}}
+}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}
+ \frametitle{Overview}
+ \tableofcontents
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+% slides
+%----------------------------------------------------------------------------------------
+
+\section{Why EDA Matters}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{The Foundation of Machine Learning}
+
+\textbf{Before building models, understand your data!}
+
+\mode<beamer>{
+\textbf{EDA answers:}
+\begin{itemize}
+\item What does the data tell us about the physics?
+\item Are there quality issues (missing, errors, outliers)?
+\item Which features predict lateral spreading?
+\item How should we preprocess?
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\vspace{1em}
+
+\textbf{Gilbert Strang's approach:} \\
+\textit{"See the structure first, then calculate."}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Liquefaction and Lateral Spreading}
+
+\textbf{Physical process:}
+\begin{enumerate}
+\item Earthquake shaking
+\item Pore pressure increases
+\item Effective stress drops: $\sigma' = \sigma - u$
+\item Soil loses strength
+\item Lateral displacement occurs
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Dataset:} Durante \& Rathje (2021)
+\begin{itemize}
+\item 7,291 case histories
+\item Target: >0.3m displacement = spreading
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Understanding Distributions}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{The Key Question}
+
+\textbf{Can we distinguish spreading from non-spreading sites?}
+
+\mode<beamer>{
+\textbf{Approach:} Compare distributions by class
+
+\begin{itemize}
+\item \textbf{Overlapping distributions:} Feature not useful
+\item \textbf{Separated distributions:} Feature is predictive
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Best visualization:} Overlaid histograms
+\begin{itemize}
+\item See both classes simultaneously
+\item Directly compare shapes and locations
+\item Immediate intuition about separability
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\textbf{This is more informative than looking at all data together!}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Reading Overlaid Histograms}
+
+\textbf{What to look for:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Separation:} How far apart are the peaks?
+  \begin{itemize}
+  \item Far apart $\to$ strong predictor
+  \item Overlapping $\to$ weak predictor
+  \end{itemize}
+
+\item \textbf{Direction:} Which class has higher values?
+  \begin{itemize}
+  \item GWD: No-spread sites have higher values (deeper water table = safer)
+  \item PGA: Spread sites have higher values (more shaking = more risk)
+  \end{itemize}
+
+\item \textbf{Overlap area:} How much do they overlap?
+  \begin{itemize}
+  \item Small overlap $\to$ easy to classify
+  \item Large overlap $\to$ difficult boundary
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Quartiles: Robust Statistics}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Why Quartiles Matter}
+
+\textbf{Problem:} Mean and std are sensitive to outliers
+
+\mode<beamer>{
+\textbf{Example:} Water depths (m): \{1.5, 1.8, 2.0, 2.1, 2.3, 15.0\}
+\begin{itemize}
+\item Mean = 4.12 m (misleading!)
+\item Median = 2.05 m (representative!)
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Quartiles divide data into four equal parts:}
+\begin{itemize}
+\item Q1 (25th percentile): 25\% below
+\item Q2 (Median, 50th percentile): middle value
+\item Q3 (75th percentile): 75\% below
+\item IQR = Q3 - Q1 (middle 50\%)
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\textbf{Box plots visualize the five-number summary}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Quartiles for Engineering Decisions}
+
+\textbf{Example: Ground Water Depth (GWD)}
+
+\mode<beamer>{
+From our data:
+\begin{itemize}
+\item Q1 = 1.64 m, Median = 1.98 m, Q3 = 2.46 m
+\item IQR = 0.82 m
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Engineering interpretation:}
+\begin{itemize}
+\item 50\% of sites: water table at 1.64-2.46 m depth
+\item Sites with GWD < Q1 (1.64 m): \textbf{High risk} zone
+\item Sites with GWD > Q3 (2.46 m): \textbf{Lower risk} zone
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Action:} Quartiles create natural risk categories!
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Outlier Detection}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{The Outlier Dilemma}
+
+\textbf{In geotechnical engineering, outliers can be:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Measurement errors:} Remove
+  \begin{itemize}
+  \item Negative water table depth
+  \item Physically impossible values
+  \end{itemize}
+
+\item \textbf{Extreme events:} Keep!
+  \begin{itemize}
+  \item Major earthquakes
+  \item Unusual but valid site conditions
+  \end{itemize}
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Never blindly remove outliers!}
+\begin{itemize}
+\item They might be your most important data
+\item Use engineering judgment + statistics
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{IQR Method (Most Robust)}
+
+\textbf{Rule:} Values beyond these bounds are outliers
+
+\mode<beamer>{
+\begin{align*}
+\text{Lower bound} &= Q1 - 1.5 \times \text{IQR} \\
+\text{Upper bound} &= Q3 + 1.5 \times \text{IQR}
+\end{align*}
+
+\textbf{Why 1.5×IQR?}
+\begin{itemize}
+\item John Tukey's empirical rule
+\item For normal distribution: captures $\sim$99.3\% of data
+\item Balances sensitivity vs over-flagging
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Advantages:}
+\begin{itemize}
+\item Works for any distribution shape
+\item Not fooled by outliers themselves
+\item Easy to explain to engineers
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Z-Scores: Two Uses}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{What is a Z-Score?}
+
+\textbf{Z-score = how many standard deviations from the mean}
+
+\mode<beamer>{
+\begin{equation*}
+z = \frac{x - \mu}{\sigma}
+\end{equation*}
+
+\textbf{Interpretation:}
+\begin{itemize}
+\item $z = 0$: At the mean
+\item $z = 1$: One std above mean
+\item $z = -2$: Two std below mean
+\item $|z| > 3$: Outlier (only 0.3\% of normal data)
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{68-95-99.7 Rule:}
+\begin{itemize}
+\item 68\% within $\pm 1\sigma$
+\item 95\% within $\pm 2\sigma$
+\item 99.7\% within $\pm 3\sigma$
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Use 1: Outlier Detection}
+
+\textbf{Example: Ground Water Depth}
+
+\mode<beamer>{
+Data: Mean $\mu = 2.08$ m, Std $\sigma = 0.64$ m
+
+\vspace{0.5em}
+
+\begin{tabular}{lcc}
+\toprule
+\textbf{Value} & \textbf{Z-score} & \textbf{Assessment} \\
+\midrule
+2.08 m & 0 & Average \\
+2.72 m & 1 & Normal \\
+3.36 m & 2 & Unusual \\
+6.00 m & 6.13 & \textbf{Outlier!} \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+
+\textbf{Threshold:} $|z| > 3$ for outliers
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Use 2: Standardization (More Important!)}
+
+\textbf{Problem:} Features have different scales
+\begin{itemize}
+\item GWD: 0.4 - 6.0 m
+\item PGA: 0.3 - 0.6 g
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{Solution:} Standardize using z-scores
+
+\mode<beamer>{
+Transform each feature:
+\begin{equation*}
+x_{\text{standardized}} = \frac{x - \mu}{\sigma}
+\end{equation*}
+
+\textbf{Result:} All features have mean = 0, std = 1
+
+\vspace{1em}
+
+\textbf{Why this matters for ML:}
+\begin{itemize}
+\item Neural networks train better
+\item Distance-based methods (KNN, SVM) need equal scales
+\item Prevents large-value features from dominating
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{IQR vs Z-Score: When to Use Each}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Method} & \textbf{Use For} & \textbf{Advantage} \\
+\midrule
+IQR & Outlier detection & Robust \\
+Z-score & Outlier detection & Assumes normality \\
+Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{1em}
+
+\textbf{Recommendation:}
+\begin{itemize}
+\item Detect outliers with IQR
+\item Standardize features with z-scores for neural networks
+\item Tree-based models don't need standardization
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Correlation and Significance}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Correlation Coefficient}
+
+\textbf{Measures linear relationship strength}
+
+\mode<beamer>{
+\textbf{Properties:}
+\begin{itemize}
+\item Range: $r \in [-1, 1]$
+\item $r = 1$: Perfect positive correlation
+\item $r = -1$: Perfect negative correlation
+\item $r = 0$: No linear correlation
+\end{itemize}
+
+\vspace{0.5em}
+
+\textbf{Interpretation for liquefaction:}
+\begin{itemize}
+\item GWD vs Target: Negative (shallow water = more risk)
+\item PGA vs Target: Positive (more shaking = more risk)
+\item L vs Target: Negative (closer to river = more risk)
+\end{itemize}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\textbf{Warning:} Correlation $\neq$ Causation!
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Statistical Significance Testing}
+
+\textbf{Question:} Are distributions truly different, or just random chance?
+
+\mode<beamer>{
+\textbf{Mann-Whitney U Test:}
+\begin{itemize}
+\item Compares two distributions
+\item Non-parametric (no normality assumption)
+\item Returns p-value
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{P-value interpretation:}
+\begin{itemize}
+\item $p < 0.001$: Extremely significant (***)
+\item $p < 0.01$: Very significant (**)
+\item $p < 0.05$: Significant (*)
+\item $p \geq 0.05$: Not significant
+\end{itemize}
+
+\vspace{1em}
+
+\textbf{For our data:} GWD, PGA, and L are highly significant (p < 0.001)
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Data Quality}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Quick Quality Checks}
+
+\textbf{Before modeling, verify:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Missing values:}
+  \begin{itemize}
+  \item How many? Which features?
+  \item Delete (<5\%) or impute (>5\%)?
+  \end{itemize}
+
+\item \textbf{Physical plausibility:}
+  \begin{itemize}
+  \item Negative values where impossible
+  \item Values outside engineering bounds
+  \end{itemize}
+
+\item \textbf{Duplicates:}
+  \begin{itemize}
+  \item Exact copies (data entry errors)?
+  \item Same site, multiple events (valid)?
+  \end{itemize}
+
+\item \textbf{Class balance:}
+  \begin{itemize}
+  \item 50-50 split? 90-10?
+  \item Severe imbalance needs special handling
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\section{Key Takeaways}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Essential Concepts}
+
+\textbf{Must-know statistical tools:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Quartiles (Q1, Median, Q3):}
+  \begin{itemize}
+  \item Robust alternative to mean/std
+  \item IQR = middle 50\% of data
+  \end{itemize}
+
+\item \textbf{Z-scores:} $z = (x - \mu) / \sigma$
+  \begin{itemize}
+  \item Outlier detection: $|z| > 3$
+  \item Standardization for ML
+  \end{itemize}
+
+\item \textbf{Correlation:}
+  \begin{itemize}
+  \item Strength of linear relationship
+  \item Not causation!
+  \end{itemize}
+
+\item \textbf{Statistical tests:}
+  \begin{itemize}
+  \item Confirm differences aren't random
+  \item P-value < 0.05 = significant
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Insights from Liquefaction Data}
+
+\textbf{What we learned:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Most important features:}
+  \begin{itemize}
+  \item GWD: Strong negative correlation
+  \item PGA: Strong positive correlation
+  \item L: Moderate negative correlation
+  \end{itemize}
+
+\item \textbf{Data quality:} Excellent
+  \begin{itemize}
+  \item No missing values
+  \item All values physically plausible
+  \item Minimal duplicates
+  \end{itemize}
+
+\item \textbf{Class balance:} ~60/40 split
+  \begin{itemize}
+  \item Reasonable balance
+  \item Use stratified sampling
+  \end{itemize}
+\end{enumerate}
+
+\vspace{1em}
+
+\textbf{Ready for machine learning!}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{ML Modeling Strategy}
+
+\textbf{Based on EDA:}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Preprocessing:}
+  \begin{itemize}
+  \item Standardize (z-scores) for neural networks
+  \item Raw features for tree-based models
+  \item Stratified train-test split
+  \end{itemize}
+
+\item \textbf{Model selection:}
+  \begin{itemize}
+  \item Start with Random Forest (robust, interpretable)
+  \item Try XGBoost (often best performance)
+  \item Neural networks with standardized inputs
+  \end{itemize}
+
+\item \textbf{Evaluation metrics:}
+  \begin{itemize}
+  \item Multiple metrics: Accuracy, Precision, Recall, F1, AUC
+  \item Confusion matrix
+  \item Consider cost of errors in engineering context
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Words of Wisdom}
+
+\begin{center}
+\large
+
+\textit{"All models are wrong, but some are useful."} \\
+\vspace{0.3em}
+--- George Box
+
+\vspace{2em}
+
+\textit{"See the structure first, then calculate."} \\
+\vspace{0.3em}
+--- Gilbert Strang
+
+\vspace{2em}
+
+\textit{"Connect to the application - numbers must have physical meaning."}
+\end{center}
+
+\vspace{1em}
+
+\textbf{The goal is insight, not just numbers!}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Common Mistakes to Avoid}
+
+\mode<beamer>{
+\begin{enumerate}
+\item \textbf{Blindly trusting summary statistics}
+  \begin{itemize}
+  \item Always visualize!
+  \end{itemize}
+
+\item \textbf{Removing outliers without investigation}
+  \begin{itemize}
+  \item Might be your most important data
+  \end{itemize}
+
+\item \textbf{Confusing correlation with causation}
+  \begin{itemize}
+  \item Ice cream sales correlate with drowning... both caused by summer!
+  \end{itemize}
+
+\item \textbf{Ignoring class imbalance}
+  \begin{itemize}
+  \item 99\% accuracy meaningless for 1\% rare class
+  \end{itemize}
+
+\item \textbf{Skipping domain knowledge check}
+  \begin{itemize}
+  \item Does this make engineering sense?
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Summary}
+
+\textbf{EDA is the foundation of successful ML}
+
+\vspace{1em}
+
+\mode<beamer>{
+\textbf{We accomplished:}
+\begin{itemize}
+\item Understood data structure and quality
+\item Identified predictive features
+\item Compared distributions by class
+\item Detected and evaluated outliers
+\item Gained physical insight into liquefaction
+\item Made informed preprocessing decisions
+\end{itemize}
+
+\vspace{1em}
+
+\textit{"No amount of sophisticated modeling can compensate for poor understanding of your data."}
+}
+\mode<handout>{
+\vspace{4cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Questions?}
+
+\centering
+\Large Thank you!
+
+\vspace{2cm}
+
+\textbf{Contact:} \\
+Krishna Kumar \\
+\textit{krishnak@utexas.edu} \\
+University of Texas at Austin
+
+\vspace{1cm}
+
+\textbf{Remember:} \\
+\textit{"Understanding the data is understanding the physics."}
+
+\end{frame}
+
+\end{document}
