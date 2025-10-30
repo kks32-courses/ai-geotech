@@ -111,6 +111,7 @@ nav:
   - Classification: 
     - Data Analytics: 00-mlp-dtree/00-eda-liquefaction.ipynb
     - Decision Tree: 00-mlp-dtree/00a-classification.ipynb
+    - Decision Tree: 00-mlp-dtree/00b-ebm.ipynb
     - MLP: 00-mlp-dtree/00b-mlp-classification.ipynb
     - Activation Function ReLU: 00-mlp-dtree/relu.md
     - Binary Cross Entropy: 00-mlp-dtree/bce.md
