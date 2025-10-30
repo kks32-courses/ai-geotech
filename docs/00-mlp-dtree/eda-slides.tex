@@ -65,6 +65,34 @@ University of Texas at Austin \\
 % slides
 %----------------------------------------------------------------------------------------
 
+%------------------------------------------------
+\begin{frame}
+\frametitle{Predicting Lateral Spreading in New Zealand}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.85\textwidth]{figs/lateral-spread-nz.png}
+\end{figure}
+
+\textbf{Goal:} Predict lateral spreading displacement during earthquakes
+
+\vspace{0.5em}
+
+\textbf{Reference:} Durante, M. G., \& Rathje, E. M. (2021). An exploration of the use of machine learning to predict lateral spreading. \textit{Earthquake Spectra}, 37(4), 2288-2314.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Input Features for Prediction}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.8\textwidth]{figs/lateral-spread-input-features.png}
+\end{figure}
+\end{frame}
+
+%------------------------------------------------
 \section{Why EDA Matters}
 
 %------------------------------------------------
@@ -453,7 +481,7 @@ Z-score & \textbf{Standardization} & \textbf{ML preprocessing} \\
 
 \vspace{0.5em}
 
-\textbf{The Algorithm (3Blue1Brown style):}
+\textbf{The Algorithm:}
 \begin{enumerate}
 \item \textbf{Mix all values} from both groups together
 \item \textbf{Rank them} from smallest to largest (1, 2, 3, ...)
@@ -626,6 +654,51 @@ PGA & 1.35e-16 & *** & Strong predictor \\
 \item \textbf{Skipping domain knowledge check}
   \begin{itemize}
   \item Does this make engineering sense?
+  \end{itemize}
+\end{enumerate}
+}
+\mode<handout>{
+\vspace{3cm}
+}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Feature Engineering}
+
+Creating new features from existing data
+
+What features to introduce for liquefaction datasets
+
+\mode<beamer>{
+
+\begin{enumerate}
+\item \textbf{Interaction features:}
+  \begin{itemize}
+  \item $\text{GWD} \times \text{PGA}$ (water depth $\times$ shaking intensity)
+  \item $\text{L} \times \text{Slope}$ (distance $\times$ slope)
+  \end{itemize}
+
+\item \textbf{Polynomial features:}
+  \begin{itemize}
+  \item $\text{GWD}^2$, $\text{PGA}^2$ (capture non-linear relationships)
+  \end{itemize}
+
+\item \textbf{Domain-specific features:}
+  \begin{itemize}
+  \item $\text{L}/\text{GWD}$ (normalized distance)
+  \item $\text{is\_shallow\_water} = \text{GWD} < 2$ m (binary threshold)
+  \end{itemize}
+
+\item \textbf{Binning/Discretization:}
+  \begin{itemize}
+  \item Convert GWD: ``shallow'', ``medium'', ``deep''
+  \end{itemize}
+
+\item \textbf{Transformations:}
+  \begin{itemize}
+  \item $\log(\text{L})$, $\sqrt{\text{Slope}}$ (handle skewness)
   \end{itemize}
 \end{enumerate}
 }
