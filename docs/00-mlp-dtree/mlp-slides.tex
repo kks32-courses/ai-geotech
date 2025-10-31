@@ -91,108 +91,42 @@ University of Texas at Austin \\
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{The 1D Poisson Equation: Our Benchmark Problem}
+\frametitle{The Challenge: 1D Consolidation Settlement}
 
-Consider the one-dimensional Poisson equation on $[0, 1]$:
+\textbf{Problem:} Predict settlement from sparse field measurements.
 
 \mode<beamer>{
+Terzaghi consolidation theory:
 \begin{equation*}
--\frac{d^2u}{dx^2} = f(x), \quad x \in [0, 1]
+S(t) = S_{\text{final}}(1 - e^{-\alpha t})
 \end{equation*}
 
-with boundary conditions:
-\begin{equation*}
-u(0) = 0, \quad u(1) = 0
-\end{equation*}
-
-For $f(x) = \pi^2 \sin(\pi x)$, the analytical solution is:
-\begin{equation*}
-u(x) = \sin(\pi x)
-\end{equation*}
+Parameters:
+\begin{itemize}
+\item $S_{\text{final}} = 100$ mm (ultimate settlement)
+\item $\alpha = 0.5$ /year (consolidation coefficient)
+\item Sparse data: 10 measurements over 10 years
+\end{itemize}
 }
 \mode<handout>{
 \vspace{3cm}
 }
 
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.8\textwidth]{figs/poisson-analytical-solution.png}
-	\caption*{Analytical solution and source function}
-\end{figure}
+\textbf{Goal:} Neural network learns continuous $S(t)$ from discrete noisy measurements.
 
 \end{frame}
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{The Function Approximation Challenge}
-
-\textbf{Key Question:} Can we learn to approximate $u(x) = \sin(\pi x)$ from sparse data?
+\frametitle{Consolidation: Field Measurements}
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{figs/sparse-data-challenge.png}
-	\caption*{Learning from 15 noisy training points}
+	\includegraphics[width=0.9\textwidth]{figs/consolidation-field-data.png}
+	\caption*{Sparse field measurements with noise}
 \end{figure}
 
-\textbf{Challenge:} Reconstruct a smooth, continuous function from limited observations.
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Traditional vs Neural Network Approaches}
-
-\begin{minipage}[t]{0.53\textwidth}
-\textbf{Finite Difference:}
-\begin{itemize}
-\item Discretize domain into grid points
-\item Solve for values at specific locations
-\item Result: Discrete representation
-\end{itemize}
-
-
-\textbf{Neural Network Approach:}
-\begin{itemize}
-	\item Learn continuous function $u_{NN}(x; \theta)$
-	\item Approximate solution over entire domain
-	\item Parameters $\theta$ trained from sparse data
-\end{itemize}
-
-
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.43\textwidth}
-\vspace{1em}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figs/finite-difference-methods.png}
-	\caption*{Finite Difference Approximation}
-\end{figure}
-
-\mode<beamer>{
-	\begin{equation*}
-		\frac{d^2u}{dx^2} \approx \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2}
-	\end{equation*}
-}
-\mode<handout>{
-	\vspace{1.5cm}
-}
-
-\end{minipage}
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}
-\frametitle{Finite Difference vs Neural Networks}
-
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.9\textwidth]{figs/fd-poisson.png}
-	\caption*{Comparison of solution methods and discretization errors}
-\end{figure}
-
-\textbf{Key Insight:} Neural networks learn continuous functions, not just discrete values.
+\textbf{Challenge:} Nonlinear, bounded physical problem with limited data.
 
 \end{frame}
 
@@ -252,12 +186,12 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Demonstrating Linear Network Failure}
+\frametitle{Linear Model Fails on Consolidation}
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{figs/linear-network-failure.png}
-	\caption*{Linear network cannot approximate $\sin(\pi x)$}
+	\includegraphics[width=0.9\textwidth]{figs/linear-consolidation-failure.png}
+	\caption*{Linear model $\hat{S} = wt + b$ cannot capture exponential decay}
 \end{figure}
 
 \textbf{Conclusion:} Nonlinearity is essential for complex function approximation.
@@ -346,6 +280,52 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 	\caption*{Single hidden layer neural network}
 \end{figure}
 \end{minipage}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Single Layer Network on Consolidation}
+
+\textbf{Architecture:} Input $\to$ Hidden (10 neurons, Tanh) $\to$ Output
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.85\textwidth]{figs/consolidation-tanh-fit.png}
+	\caption*{Tanh activation fits consolidation curve smoothly}
+\end{figure}
+
+\textbf{Success:} 10 neurons sufficient for smooth approximation of bounded function.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Network Width Comparison}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figs/consolidation-width-comparison.png}
+	\caption*{Consolidation approximation: 1, 5, 10, 20, 50 neurons}
+\end{figure}
+
+\textbf{Finding:} 10-20 neurons optimal. Diminishing returns beyond.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Activation Function Choice Matters}
+
+\textbf{Test:} ReLU vs Tanh vs Sigmoid on consolidation
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.85\textwidth]{figs/consolidation-activation-comparison.png}
+	\caption*{Tanh naturally saturates at $S_{\text{final}} = 100$ mm}
+\end{figure}
+
+\textbf{Rule:} Bounded physical problems $\to$ Tanh/Sigmoid. Unbounded $\to$ ReLU.
 
 \end{frame}
 
@@ -608,6 +588,57 @@ where $\eta$ is the learning rate.
 
 %------------------------------------------------
 \begin{frame}
+\frametitle{Loss Functions}
+
+\textbf{Regression (Consolidation):} Mean Squared Error
+\mode<beamer>{
+\begin{equation*}
+\mathcal{L}_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^N (S_i - \hat{S}_i)^2
+\end{equation*}
+}
+
+\textbf{Binary Classification (Liquefaction):} Binary Cross-Entropy
+\mode<beamer>{
+\begin{equation*}
+\mathcal{L}_{\text{BCE}} = -\frac{1}{N} \sum_{i=1}^N [y_i \log(\hat{y}_i) + (1-y_i) \log(1-\hat{y}_i)]
+\end{equation*}
+
+\vspace{0.5em}
+}
+\mode<handout>{
+\vspace{2cm}
+}
+
+\textbf{Why BCE for classification?}
+\begin{itemize}
+\item Probabilistic interpretation
+\item Stronger gradients for wrong confident predictions
+\item Works with sigmoid output $\hat{y} \in (0,1)$
+\end{itemize}
+
+\centering
+\href{https://kks32-courses.github.io/ai-geotech/00-mlp-dtree/bce}{\beamergotobutton{BCE Demo}}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Optimizer Comparison}
+
+\textbf{Test on consolidation:} SGD vs Momentum vs Adam
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.95\textwidth]{figs/consolidation-optimizers.png}
+	\caption*{Adam converges fastest, SGD slowest}
+\end{figure}
+
+\textbf{Recommendation:} Adam (lr=0.01) for most problems.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
 \frametitle{Width vs Approximation Quality}
 
 \textbf{Hypothesis:} More neurons → better approximation
@@ -633,28 +664,6 @@ where $\eta$ is the learning rate.
 \end{figure}
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}
-\frametitle{Training Convergence Analysis}
-\begin{minipage}[t]{0.58\textwidth}
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.65\linewidth]{figs/training-convergence.png}
-	\caption*{Training convergence and final loss vs width}
-\end{figure}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{0.38\textwidth}
-\textbf{Key Findings:}
-\begin{itemize}
-\item 50 neurons: $\sim$10x better than 5 neurons
-\item Logarithmic improvement with width
-\item Convergence rate similar across widths
-\end{itemize}
-
-\end{minipage}
-
-\end{frame}
 
 %------------------------------------------------
 \begin{frame}
@@ -824,6 +833,22 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 
 %------------------------------------------------
 \begin{frame}
+\frametitle{Shallow vs Deep on Consolidation}
+
+\textbf{Comparison:} 1 layer (10 neurons) vs 2 layers (16-16)
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.85\textwidth]{figs/consolidation-shallow-deep.png}
+	\caption*{Both work for smooth functions; Deep more parameter-efficient}
+\end{figure}
+
+\textbf{When to go deep?} Complex boundaries, high-frequency, images. Otherwise 1-2 layers sufficient.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
 \frametitle{Four Key Insights on Depth}
 
 \textbf{1. Representation Efficiency}
@@ -855,23 +880,49 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 
 %------------------------------------------------
 \begin{frame}
+\frametitle{Practical Recipe: 1D Consolidation}
+
+\textbf{Architecture:}
+\begin{itemize}
+\item 2 hidden layers, 16-32 neurons each
+\item Activation: Tanh (bounded), ReLU (unbounded)
+\end{itemize}
+
+\textbf{Training:}
+\begin{itemize}
+\item Optimizer: Adam (lr=0.01)
+\item Epochs: 2000-3000
+\item Monitor validation loss for overfitting
+\end{itemize}
+
+\textbf{Results:}
+\begin{itemize}
+\item MSE < 2.0 mm$^2$
+\item Smooth predictions over entire domain
+\item Generalizes well to test data
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
 \frametitle{Summary and Conclusions}
 
 \textbf{Key Takeaways:}
 \begin{itemize}
-\item Neural networks learn continuous functions from sparse data
-\item Nonlinearity is essential for complex function approximation
-\item Universal Approximation Theorem provides theoretical foundation
-\item Width increases capacity but depth is more efficient
-\item Historical XOR problem revealed importance of hidden layers
-\item Deep networks enable hierarchical feature learning
+\item Nonlinearity essential for complex patterns
+\item UAT: Single layer theoretically sufficient
+\item Practice: 1-2 layers for most problems
+\item Activation choice matters: Tanh for bounded, ReLU for unbounded
+\item Training: Adam + validation prevents overfitting
+\item XOR lesson: Depth creates feature hierarchies
 \end{itemize}
 
 \textbf{Applications:}
 \begin{itemize}
-\item Scientific computing and PDE solving
-\item Function approximation and regression
-\item Pattern recognition and classification
+\item Consolidation settlement prediction
+\item Liquefaction classification
+\item Function approximation from sparse data
 \item Physics-informed neural networks (PINNs)
 \end{itemize}
 
