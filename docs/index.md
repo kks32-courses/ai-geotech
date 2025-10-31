@@ -22,7 +22,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 - Implement advanced AI techniques, including Recurrent Neural Networks for time-series data, Large Language Models (LLMs) for knowledge management, and Convolutional/Graph Neural Networks for specialized geotechnical data analysis, while considering ethical implications and emerging trends.
 
-## Day 1: October 30
+## Day 1:
 
 ### Module 1: Introduction, Data Processing, and Feature Engineering (10am-noon)
 
@@ -35,7 +35,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Demo examples:** Perform Exploratory Data Analysis (EDA) on borehole data and preprocess (clean) landslide data for modeling.
 
-### Module 2: Tree-based Supervised Classification Methods - Day 1 (1-3:30 pm)
+### Module 2: Tree-based Supervised Classification Methods
 
 **Theme:** Applying fundamental supervised learning algorithms for prediction tasks.
 
@@ -47,7 +47,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Build a decision tree classifier for landslide susceptibility mapping and train a logistic regression model for soil type prediction.
 
-### Module 3: Explainable AI (XAI) and Glass-Box Models - Day 1 (4-5 pm)
+### Module 3: Explainable AI (XAI) and Glass-Box Models
 
 **Theme:** Understanding and interpreting complex AI models.
 
@@ -58,9 +58,9 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Train a Random Forest model to predict landslides and interpret the results using SHAP values and feature importance.
 
-## Day 2: October 31
+## Day 2:
 
-### Module 4: Neural Networks - Introduction - Day 2 (8-9:30 am, 10-noon)
+### Module 4: Neural Networks - Multi-Layer Perceptron (Theory)
 
 **Theme:** Understanding the fundamental building blocks of deep learning models.
 
@@ -71,9 +71,9 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Build the architecture of a PyTorch Deep Neural Network (DNN).
 
-## Day 3: November 7
+## Day 3:
 
-### Module 5: Neural Networks - Applications - Day 3 (10-noon)
+### Module 5: Neural Networks - Multi-Layer Perceptron (Applications)
 
 **Theme:** Applying Deep Neural Networks (DNNs) to solve specific geotechnical engineering problems.
 
@@ -83,7 +83,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Hyperparameter Tuning, Regularization, and Other Geotechnical Applications.
 - Train a DNN to predict TBM data using synthetic geology data, focusing on the training process and hyperparameter tuning.
 
-### Module 6: Convolutional Neural Networks - Day 3 (1-3 pm)
+### Module 6: Convolutional Neural Networks and Recurrent Neural Networks
 
 **Theme:** Understanding and applying CNNs for image and spatial data in geotechnics.
 
@@ -94,8 +94,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Train a PyTorch CNN to invert seismic waveforms (simplified example) or for rock fracture detection from provided images
 
-### Module 7: Clustering - Day 3 (3:30-5 pm)
-
+### Module 7: Clustering
 **Theme:** Using unsupervised learning for site profiling and layering.
 
 **Presentations**
@@ -106,9 +105,9 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Cluster soil layers from CPT/SPT data using SciKit-Learn and visualize the resulting 3D stratigraphy.
 
-## Day 4: November 8
+## Day 4:
 
-### Module 8: Large Language Models (LLMs) in Geotechnics - Day 4 (8-10 am)
+### Module 8: Large Language Models (LLMs) in Geotechnics
 
 **Theme:** Leveraging LLMs for knowledge management and text-based tasks.
 
@@ -119,7 +118,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Create a Q&A chatbot for geotechnical codes using HuggingFace Transformers and RAG principles.
 
-### Module 9: Advanced Topics & Future Outlook - Day 4 (10:30-noon)
+### Module 9: Physics Informed Neural Networks and Operator Learning
 
 **Theme:** Exploring Graph Neural Networks, other advanced concepts, and the future of AI in Geotechnics.
 
