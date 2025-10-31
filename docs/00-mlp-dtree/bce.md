@@ -1,5 +1,87 @@
 # Binary Cross Entropy Loss
 
+Binary Cross-Entropy (BCE), also known as Log Loss, is a loss function used in machine learning for binary classification tasks.
+
+A loss function measures how "good" a model's predictions are compared to the actual ground truth. The goal of training a model is to minimize this loss.
+
+Binary classification problems are any problem where the output is one of two classes, for example:
+
+Spam vs. Not Spam
+
+Yes vs. No
+
+Class 1 vs. Class 0
+
+### The Core Intuition
+
+The main idea of BCE is to heavily penalize predictions that are both confident and wrong.
+
+If the correct answer is 1, the model should predict a probability as close to 1 as possible. A prediction of 0.1 would be penalized much more than a prediction of 0.6.
+
+If the correct answer is 0, the model should predict a probability as close to 0 as possible. A prediction of 0.9 would be penalized much more than a prediction of 0.4.
+
+A "perfect" model would have a BCE loss of 0.
+
+### The Formula
+
+The loss $L$ for a single data point is calculated using the following formula:
+
+$$L = -[y \cdot \log(p) + (1 - y) \cdot \log(1 - p)]$$
+
+Where:
+
+$y$ (gamma): The true label (it's either 0 or 1).
+
+$p$ (rho): The predicted probability from your model that the label is 1 (a value between 0.0 and 1.0).
+
+$\log$: The natural logarithm.
+
+### How the Formula Works: A Breakdown
+
+The formula looks complex, but it's actually a clever way of combining two separate pieces into one. Let's analyze it based on the two possible true labels.
+
+> Case 1: The true label is 1 ($y=1$)
+
+If we plug $y=1$ into the formula, the second half becomes zero:
+
+$$L = -[1 \cdot \log(p) + (1 - 1) \cdot \log(1 - p)]$$
+
+$$L = -[1 \cdot \log(p) + 0 \cdot \log(1 - p)]$$
+
+$$L = -\log(p)$$
+
+So, when the true answer is 1, the loss is just $-\log(p)$.
+
+If the model predicts $p=0.99$ (confident and correct):
+The loss is $-\log(0.99) \approx 0.01$. This is a very low loss.
+
+If the model predicts $p=0.1$ (confident and wrong):
+The loss is $-\log(0.1) \approx 2.30$. This is a very high loss.
+
+> Case 2: The true label is 0 ($y=0$)
+
+If we plug $y=0$ into the formula, the first half becomes zero:
+
+$$L = -[0 \cdot \log(p) + (1 - 0) \cdot \log(1 - p)]$$
+
+$$L = -[0 \cdot \log(p) + 1 \cdot \log(1 - p)]$$
+
+$$L = -\log(1 - p)$$
+
+So, when the true answer is 0, the loss is $-\log(1 - p)$. (Note that $1-p$ is the model's predicted probability that the class is 0).
+
+If the model predicts $p=0.01$ (confident and correct):
+The loss is $-\log(1 - 0.01) = -\log(0.99) \approx 0.01$. This is a very low loss.
+
+If the model predicts $p=0.9$ (confident and wrong):
+The loss is $-\log(1 - 0.9) = -\log(0.1) \approx 2.30$. This is a very high loss.
+
+> Visualizing the Loss
+
+Both cases rely on the $-\log(x)$ function. As the predicted probability of the correct class ($p$ in Case 1, $1-p$ in Case 2) gets closer to 0, the loss function shoots up towards infinity.
+
+This graph shows exactly why BCE works: it creates a massive penalty for being confidently wrong, which provides a strong "gradient" or "push" for the model to learn from its worst mistakes.
+
 <!DOCTYPE html>
 <html>
 <head>
