@@ -114,6 +114,7 @@ nav:
     - EBM: 00-mlp-dtree/00b-ebm.ipynb
   - Multi-Layer Perceptron:
     - MLP: 00-mlp-dtree/00b-mlp-classification.ipynb
+    - UAT: 00-mlp-dtree/uat.md
     - Activation Function ReLU: 00-mlp-dtree/relu.md
     - Binary Cross Entropy: 00-mlp-dtree/bce.md
     - Automatic Differentiation: 00-mlp-dtree/ad.md
