@@ -115,6 +115,7 @@ nav:
   - Multi-Layer Perceptron:
     - MLP classification: 00-mlp-dtree/00b-mlp-classification.ipynb
     - MLP function approximation: 00-mlp-dtree/00c-mlp-function-approximation.ipynb
+    - MLP extrapolation: 00-mlp-dtree/mlp-extrapolation.ipynb
     - UAT: 00-mlp-dtree/uat.md
     - Activation Function ReLU: 00-mlp-dtree/relu.md
     - Binary Cross Entropy: 00-mlp-dtree/bce.md
