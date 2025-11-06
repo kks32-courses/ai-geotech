@@ -122,6 +122,11 @@ nav:
     - Binary Cross Entropy: 00-mlp-dtree/bce.md
     - Automatic Differentiation: 00-mlp-dtree/ad.md
     - Gradient Descent: 00-mlp-dtree/sgd.md
+  - LSTM:
+    - LSTM Liquefaction: 02-lstm/lstm-liquefaction
+  - CNN:
+    - CNN soil image classification: 03-cnn/cnn-soil-classification.ipynb
+    - CNN FWI: 03-cnn/cnn-fwi-velocity.ipynb
   - PINNs:
     - PINNs oscillator: 01-pinn/pinn.ipynb
     - PINNs 1D consolidation: 01-pinn/1d-consolidation-pinns.ipynb
