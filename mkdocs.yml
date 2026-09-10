@@ -4,6 +4,25 @@ site_description: Course materials for AI in Geotechnical Engineering
 site_url: https://github.com/kks32-courses/ai-geotech
 repo_url: https://github.com/kks32-courses/ai-geotech
 use_directory_urls: false
+
+exclude_docs: |
+  .*
+  /templates/
+  *.pptx
+  .env*
+  chroma_db/
+  *.aux
+  *.log
+  *.nav
+  *.snm
+  *.toc
+  *.out
+  *.vrb
+  *.fls
+  *.fdb_latexmk
+  *.synctex.gz
+  *.bak
+
 repo_name: SciML Course Repo
 
 theme:
@@ -108,29 +127,67 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Classification & Tree-based Methods: 
-    - Data Analytics: 00-mlp-dtree/00-eda-liquefaction.ipynb
-    - Decision Tree: 00-mlp-dtree/00a-classification.ipynb
-    - EBM: 00-mlp-dtree/00b-ebm.ipynb
+  - Decision Trees and Random Forests:
+    - 01-dtree/index.md
+    - Exploratory data analysis: 01-dtree/01a-eda-liquefaction.ipynb
+    - Decision tree, random forest, XGBoost: 01-dtree/01b-classification.ipynb
+    - Exercises:
+      - Exploratory data analysis: 01-dtree/01a-eda-liquefaction-exercise.ipynb
+      - Classification: 01-dtree/01b-classification-exercise.ipynb
+  - Explainable AI:
+    - 02-xai/index.md
+    - Explainable Boosting Machine: 02-xai/02a-ebm.ipynb
+    - Exercise: 02-xai/02a-ebm-exercise.ipynb
   - Multi-Layer Perceptron:
-    - MLP classification: 00-mlp-dtree/00b-mlp-classification.ipynb
-    - MLP Pile design: 00-mlp-dtree/00c-mlp-pile-capacity.ipynb
-    - MLP function approximation: 00-mlp-dtree/00c-mlp-function-approximation.ipynb
-    - MLP extrapolation: 00-mlp-dtree/mlp-extrapolation.ipynb
-    - UAT: 00-mlp-dtree/uat.md
-    - Activation Function ReLU: 00-mlp-dtree/relu.md
-    - Binary Cross Entropy: 00-mlp-dtree/bce.md
-    - Automatic Differentiation: 00-mlp-dtree/ad.md
-    - Gradient Descent: 00-mlp-dtree/sgd.md
-  - LSTM:
-    - LSTM Liquefaction: 02-lstm/lstm-liquefaction
-  - CNN:
-    - CNN soil image classification: 03-cnn/cnn-soil-classification.ipynb
-    - CNN FWI: 03-cnn/cnn-fwi-velocity.ipynb
-  - PINNs:
-    - PINNs oscillator: 01-pinn/pinn.ipynb
-    - PINNs 1D consolidation: 01-pinn/1d-consolidation-pinns.ipynb
-    - PINNs 1D consolidation [L-BFGS]: 01-pinn/1d-consolidation-pinns-lbfgs.ipynb
+    - 03-mlp/index.md
+    - MLP classification: 03-mlp/03a-mlp-classification.ipynb
+    - MLP pile capacity: 03-mlp/03b-mlp-pile-capacity.ipynb
+    - MLP function approximation: 03-mlp/03c-mlp-function-approximation.ipynb
+    - MLP extrapolation: 03-mlp/03d-mlp-extrapolation.ipynb
+    - Theory:
+      - Universal approximation theorem: 03-mlp/uat.md
+      - Activation function ReLU: 03-mlp/relu.md
+      - Binary cross entropy: 03-mlp/bce.md
+      - Automatic differentiation: 03-mlp/ad.md
+      - Gradient descent: 03-mlp/sgd.md
+    - Exercises:
+      - MLP classification: 03-mlp/03a-mlp-classification-exercise.ipynb
+      - MLP function approximation: 03-mlp/03c-mlp-function-approximation-exercise.ipynb
+      - MLP pile capacity: 03-mlp/03b-mlp-pile-capacity-exercise.ipynb
+  - Convolutional Neural Networks:
+    - 04-cnn/index.md
+    - Soil image classification: 04-cnn/04a-cnn-soil-classification.ipynb
+    - FWI velocity inversion: 04-cnn/04b-cnn-fwi-velocity.ipynb
+    - Exercises:
+      - Soil image classification: 04-cnn/04a-cnn-soil-classification-exercise.ipynb
+      - FWI velocity inversion: 04-cnn/04b-cnn-fwi-velocity-exercise.ipynb
+  - Recurrent Networks and LSTM:
+    - 05-lstm/index.md
+    - LSTM liquefaction: 05-lstm/05a-lstm-liquefaction.ipynb
+    - Exercise: 05-lstm/05a-lstm-liquefaction-exercise.ipynb
+  - Clustering:
+    - 06-clustering/index.md
+    - Fetch CPT data (DesignSafe API): 06-clustering/06a-fetch-cpt-data-dapi.ipynb
+    - Clustering analysis: 06-clustering/06b-clustering-analysis.ipynb
+    - Exercise: 06-clustering/06b-clustering-analysis-exercise.ipynb
+  - Large Language Models:
+    - 07-llm/index.md
+    - Direct API calls: 07-llm/07a-llm-bearing-capacity-direct.ipynb
+    - Multi-agent calculator: 07-llm/07b-llm-bearing-capacity-agents.ipynb
+    - RAG over geotechnical reports: 07-llm/07c-llm-rag-geotechnical.ipynb
+    - Exercises:
+      - Direct API calls: 07-llm/07a-llm-bearing-capacity-direct-exercise.ipynb
+      - Multi-agent calculator: 07-llm/07b-llm-bearing-capacity-agents-exercise.ipynb
+      - RAG: 07-llm/07c-llm-rag-geotechnical-exercise.ipynb
+  - Physics-Informed Neural Networks:
+    - 08-pinn/index.md
+    - PINN oscillator: 08-pinn/08a-pinn.ipynb
+    - 1D wave equation (PINN vs FD): 08-pinn/08b-pinn-forward.ipynb
+    - 1D consolidation: 08-pinn/08c-1d-consolidation-pinns.ipynb
+    - 1D consolidation (L-BFGS): 08-pinn/08d-1d-consolidation-pinns-lbfgs.ipynb
+    - Exercises:
+      - PINN: 08-pinn/08a-pinn-exercise.ipynb
+      - 1D consolidation: 08-pinn/08c-1d-consolidation-pinns-exercise.ipynb
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>

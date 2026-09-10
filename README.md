@@ -2,6 +2,12 @@
 
 **Dr. Krishna Kumar and Dr. Ellen Rathje, University of Texas at Austin**
 
+## Course overview
+
+The [lecture slides](docs/2025-AI-Geotech.pdf) introduce machine learning in geotechnical
+engineering in 49 pages. The [course agenda](docs/TexasEEE-AI-Geotech.pdf) lists the modules
+and the daily schedule.
+
 This 20-hour online course enables geotechnical professionals with practical AI skills. Participants master data processing, feature engineering, and core machine learning models for classification, regression, and clustering. The curriculum explores deep learning, including various neural networks (DNN, RNN, CNN), vital explainable AI (XAI) techniques and Large Language Models for geotechnical applications. Through hands-on exercises with industry tools, attendees tackle real-world geotechnical challenges, from site characterization to knowledge management. Participants will be equipped to apply AI to enhance analysis, improve decision-making, and drive innovation in geotechnics.
 
 ### Course Introduction Video
@@ -35,6 +41,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Demo examples:** Perform Exploratory Data Analysis (EDA) on borehole data and preprocess (clean) landslide data for modeling.
 
+**Materials**
+- Slides: [Introduction and exploratory analysis](docs/01-dtree/01-intro-eda-slides.pdf), [Exploratory data analysis](docs/01-dtree/01-eda-slides.pdf)
+- Notebook: [Exploratory data analysis](docs/01-dtree/01a-eda-liquefaction.ipynb)
+
 ### Module 2: Tree-based Supervised Classification Methods
 
 **Theme:** Applying fundamental supervised learning algorithms for prediction tasks.
@@ -47,6 +57,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Build a decision tree classifier for landslide susceptibility mapping and train a logistic regression model for soil type prediction.
 
+**Materials**
+- Slides: [Tree-based classification](docs/01-dtree/01-classification-slides.pdf)
+- Notebook: [Decision tree, random forest, XGBoost](docs/01-dtree/01b-classification.ipynb)
+
 ### Module 3: Explainable AI (XAI) and Glass-Box Models
 
 **Theme:** Understanding and interpreting complex AI models.
@@ -57,6 +71,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Explainable Boosting Machines (EBM)
 
 **Hands-On:** Train a Random Forest model to predict landslides and interpret the results using SHAP values and feature importance.
+
+**Materials**
+- Notebook: [SHAP section of the classification notebook](docs/01-dtree/01b-classification.ipynb)
+- Notebook: [Explainable Boosting Machine](docs/02-xai/02a-ebm.ipynb)
 
 ## Day 2:
 
@@ -71,6 +89,11 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Build the architecture of a PyTorch Deep Neural Network (DNN).
 
+**Materials**
+- Slides: [Multi-layer perceptron](docs/03-mlp/03-mlp-slides.pdf)
+- Notebook: [MLP classification](docs/03-mlp/03a-mlp-classification.ipynb)
+- Theory: [Universal approximation theorem](docs/03-mlp/uat.md), [Activation function ReLU](docs/03-mlp/relu.md), [Binary cross entropy](docs/03-mlp/bce.md), [Automatic differentiation](docs/03-mlp/ad.md), [Gradient descent](docs/03-mlp/sgd.md)
+
 ## Day 3:
 
 ### Module 5: Neural Networks - Multi-Layer Perceptron (Applications)
@@ -83,6 +106,12 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Hyperparameter Tuning, Regularization, and Other Geotechnical Applications.
 - Train a DNN to predict TBM data using synthetic geology data, focusing on the training process and hyperparameter tuning.
 
+**Materials**
+- Notebook: [MLP pile capacity](docs/03-mlp/03b-mlp-pile-capacity.ipynb)
+- Notebook: [MLP function approximation](docs/03-mlp/03c-mlp-function-approximation.ipynb)
+- Notebook: [MLP extrapolation](docs/03-mlp/03d-mlp-extrapolation.ipynb)
+- Data: [shield_tunneling_risk_dataset.csv](docs/03-mlp/tbm/shield_tunneling_risk_dataset.csv), [tunnel_risk_dataset.csv](docs/03-mlp/tbm/tunnel_risk_dataset.csv), [TBM-Supplementary material.xlsx](docs/03-mlp/tbm/TBM-Supplementary%20material.xlsx)
+
 ### Module 6: Convolutional Neural Networks and Recurrent Neural Networks
 
 **Theme:** Understanding and applying CNNs for image and spatial data in geotechnics.
@@ -94,6 +123,13 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Train a PyTorch CNN to invert seismic waveforms (simplified example) or for rock fracture detection from provided images
 
+**Materials**
+- Slides: [Convolutional neural networks](docs/04-cnn/04-cnn-slides.pdf)
+- Notebook: [Soil image classification](docs/04-cnn/04a-cnn-soil-classification.ipynb)
+- Notebook: [FWI velocity inversion](docs/04-cnn/04b-cnn-fwi-velocity.ipynb)
+- Slides: [Recurrent networks and LSTM](docs/05-lstm/05-rnn-lstm-slides.pdf), [LSTM for liquefaction](docs/05-lstm/05-lstm-liquefaction-slides.pdf)
+- Notebook: [LSTM liquefaction](docs/05-lstm/05a-lstm-liquefaction.ipynb)
+
 ### Module 7: Clustering
 **Theme:** Using unsupervised learning for site profiling and layering.
 
@@ -104,6 +140,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Spectral Clustering
 
 **Hands-On:** Cluster soil layers from CPT/SPT data using SciKit-Learn and visualize the resulting 3D stratigraphy.
+
+**Materials**
+- Notebook: [Fetch CPT data from the DesignSafe API](docs/06-clustering/06a-fetch-cpt-data-dapi.ipynb)
+- Notebook: [Clustering analysis](docs/06-clustering/06b-clustering-analysis.ipynb)
 
 ## Day 4:
 
@@ -118,6 +158,12 @@ Apply a range of machine learning and deep learning algorithms (including regres
 
 **Hands-On:** Create a Q&A chatbot for geotechnical codes using HuggingFace Transformers and RAG principles.
 
+**Materials**
+- Slides: [Large language models](docs/07-llm/07-llm-slides.pdf)
+- Notebook: [Direct API calls](docs/07-llm/07a-llm-bearing-capacity-direct.ipynb)
+- Notebook: [Multi-agent calculator](docs/07-llm/07b-llm-bearing-capacity-agents.ipynb)
+- Notebook: [RAG over geotechnical reports](docs/07-llm/07c-llm-rag-geotechnical.ipynb)
+
 ### Module 9: Physics Informed Neural Networks and Operator Learning
 
 **Theme:** Exploring Graph Neural Networks, other advanced concepts, and the future of AI in Geotechnics.
@@ -126,3 +172,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Introduction to Graph Neural Networks (GNNs) - Concepts & Potential Applications.
 - Other Emerging AI Methods (e.g., Physics-Informed Neural Networks - PINNs).
 - Future Trends, Ethics, and Challenges in AI for Geotechnics.
+
+**Materials**
+- Slides: [Physics-informed neural networks](docs/08-pinn/08-pinn-slides.pdf)
+- Notebook: [PINN oscillator](docs/08-pinn/08a-pinn.ipynb)
+- Notebook: [1D wave equation: PINN vs finite difference](docs/08-pinn/08b-pinn-forward.ipynb)
+- Notebook: [1D consolidation](docs/08-pinn/08c-1d-consolidation-pinns.ipynb)
+- Notebook: [1D consolidation with L-BFGS](docs/08-pinn/08d-1d-consolidation-pinns-lbfgs.ipynb)

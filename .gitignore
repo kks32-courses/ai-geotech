@@ -332,3 +332,7 @@ TSWLatexianTemp*
 # Uncomment the next line to have this generated file ignored.
 #*Notes.bib
 
+
+# local site build, RAG vector store
+site/
+chroma_db/
