@@ -1,11 +1,30 @@
 # Automatic Differentiation: Forward and Reverse-mode
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Interactive Automatic Differentiation</title>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+## What automatic differentiation computes
+
+Automatic differentiation differentiates a program, not a formula. The program is a sequence of elementary operations. Each operation has a known derivative, and the chain rule composes them. The result is exact to floating point, unlike a finite difference, and it costs a small constant times the cost of evaluating the function, unlike symbolic differentiation.
+
+Write the program as intermediate variables $w_1, \dots, w_m$, inputs first and output last. The demo below uses $y = x_1^2 + x_2$, which becomes
+
+$$w_1 = x_1, \quad w_2 = x_2, \quad w_3 = w_1^2, \quad w_4 = w_3 + w_2, \quad y = w_4 .$$
+
+## Forward mode
+
+Fix one input, say $x_1$. Carry a tangent $\dot w_k = \partial w_k / \partial x_1$ next to every value. Seed the inputs with $\dot w_1 = 1$ and $\dot w_2 = 0$. Each operation propagates its tangent, so $\dot w_3 = 2 w_1 \dot w_1$ and then $\dot w_4 = \dot w_3 + \dot w_2$. One sweep in the order of evaluation gives $\partial y / \partial x_1$ for every output.
+
+## Reverse mode
+
+Run the function forward and store the intermediate values. Then carry an adjoint $\bar w_k = \partial y / \partial w_k$ backwards, seeded with $\bar y = 1$. Each operation adds $\bar w_k \, \partial w_k / \partial w_j$ to the adjoint of each of its inputs $w_j$. For the example, $\bar w_4 = 1$, then $\bar w_3 = \bar w_4 \cdot 1 = 1$ and $\bar w_2 = \bar w_4 \cdot 1 = 1$, then $\bar w_1 = \bar w_3 \cdot 2 w_1 = 2 x_1$. One sweep in reverse order gives $\partial y / \partial x_i$ for every input.
+
+## The cost asymmetry
+
+Forward mode costs one sweep per input, so $n$ inputs need $n$ sweeps. Reverse mode costs one sweep per output, so $k$ outputs need $k$ sweeps. In training, the inputs being differentiated are the network parameters and the single output is the scalar loss. That puts $n$ in the millions and $k$ at 1. Reverse mode is backpropagation, and this ratio is the reason it is used.
+
+Reverse mode pays for that with memory. It stores every intermediate value from the forward pass, because the backward pass needs them. Forward mode stores nothing beyond the current tangent.
+
+## Interactive demo
+
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 
 <style>
@@ -311,13 +330,11 @@
         margin: 10px 0;
     }
 </style>
-</head>
-<body>
 
 <div id="ad-container">
     <div class="ad-header">
-        <h2>Interactive Automatic Differentiation</h2>
-        <p>Explore forward and reverse mode AD on the function: y = x₁² + x₂</p>
+        <p>Forward and reverse mode automatic differentiation on y = x₁² + x₂.</p>
+        <p style="font-size: 14px; color: #555; max-width: 720px; margin: 8px auto;">Forward mode needs one sweep per input, so getting both ∂y/∂x₁ and ∂y/∂x₂ takes two runs. Reverse mode needs one sweep per output, and there is one output here, so a single backward sweep returns both derivatives.</p>
     </div>
 
     <div class="input-controls">
@@ -491,28 +508,28 @@
             description: "Forward pass complete, now backward pass",
             highlight: ['y'],
             edges: [],
-            calculation: "All values computed:\nw₁=%x1%, w₂=%x2%, w₃=%v1%, w₄=%y%, y=%y%\n\nStart: ∂y/∂y = 1",
+            calculation: "All values computed:\nw₁=%x1%, w₂=%x2%, w₃=%v1%, w₄=%y%, y=%y%\n\nSeed the output adjoint: ȳ = 1",
             nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '%y%', y: '%y%' }
         },
         {
-            description: "∂y/∂w₄ = 1 (y = w₄)",
+            description: "w̄₄ = 1 (y = w₄)",
             highlight: ['add'],
             edges: ['y-add'],
-            calculation: "∂y/∂w₄ = ∂y/∂y × ∂y/∂w₄ = 1 × 1 = 1",
+            calculation: "Adjoint of w₄:\nw̄₄ = ȳ · ∂y/∂w₄ = 1 × 1 = 1",
             nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '%y%', y: '%y%' }
         },
         {
-            description: "∂y/∂w₃ = 1, ∂y/∂w₂ = 1 (w₄ = w₃ + w₂)",
+            description: "w̄₃ = 1, w̄₂ = 1 (w₄ = w₃ + w₂)",
             highlight: ['square', 'x2'],
             edges: ['add-square', 'add-x2'],
-            calculation: "∂y/∂w₃ = ∂y/∂w₄ × ∂w₄/∂w₃ = 1 × 1 = 1\n∂y/∂w₂ = ∂y/∂w₄ × ∂w₄/∂w₂ = 1 × 1 = 1",
+            calculation: "w̄₃ = w̄₄ · ∂w₄/∂w₃ = 1 × 1 = 1\nw̄₂ = w̄₄ · ∂w₄/∂w₂ = 1 × 1 = 1",
             nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '%y%', y: '%y%' }
         },
         {
-            description: "∂y/∂w₁ = 2x₁ (w₃ = w₁²)",
+            description: "w̄₁ = 2x₁ (w₃ = w₁²)",
             highlight: ['x1'],
             edges: ['square-x1'],
-            calculation: "∂y/∂w₁ = ∂y/∂w₃ × ∂w₃/∂w₁ = 1 × 2w₁ = 2(%x1%) = %dy_dx1%",
+            calculation: "w̄₁ = w̄₃ · ∂w₃/∂w₁ = 1 × 2w₁ = 2(%x1%) = %dy_dx1%",
             nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '%y%', y: '%y%' }
         },
         {
@@ -523,7 +540,7 @@
                 path1: ['square-x1', 'add-square', 'y-add'],
                 path2: ['add-x2', 'y-add']
             },
-            calculation: "Path 1 (orange): ∂y/∂w₁ = ∂y/∂w₄ × ∂w₄/∂w₃ × ∂w₃/∂w₁\n                    = 1 × 1 × 2w₁ = %dy_dx1%\n\nPath 2 (teal): ∂y/∂w₂ = ∂y/∂w₄ × ∂w₄/∂w₂\n                = 1 × 1 = 1\n\nFinal gradient: ∇y = (%dy_dx1%, 1)",
+            calculation: "Path 1 (orange): w̄₁ = ȳ · ∂w₄/∂w₃ · ∂w₃/∂w₁\n                    = 1 × 1 × 2w₁ = %dy_dx1%\n\nPath 2 (teal): w̄₂ = ȳ · ∂w₄/∂w₂\n                = 1 × 1 = 1\n\nFinal gradient: ∇y = (%dy_dx1%, 1)",
             nodeValues: { x1: '%x1%', x2: '%x2%', square: '%v1%', add: '%y%', y: '%y%' },
             showFinalGradients: true
         }
@@ -926,6 +943,3 @@
     reset();
 })();
 </script>
-
-</body>
-</html>

@@ -1,17 +1,44 @@
-# Universal Approximation Theorem: Interactive Demos
+# Universal approximation theorem
 
+## The statement
 
-> Theorem (Cybenko, 1989): A single hidden layer network with sufficient neurons can approximate any continuous function to arbitrary accuracy.
-$$F(x) = \sum_{i=1}^{N} w_i \sigma(v_i x + b_i) + w_0$$
+A single hidden layer network with $N$ units computes
 
-**Mathematical statement**: For any continuous $f: [0,1] \to \mathbb{R}$ and $\epsilon > 0$, there exists $N$ and parameters such that $|F(x) - f(x)| < \epsilon$ for all $x \in [0,1]$.
+$$F(x) = \sum_{i=1}^{N} w_i \, \sigma(v_i^{\mathsf{T}} x + b_i) + w_0 .$$
 
-## Step Function Approximation
+The input is $x \in \mathbb{R}^n$. Each $v_i \in \mathbb{R}^n$ is an input weight vector and each $b_i \in \mathbb{R}$ is a bias. The function $\sigma$ is the activation, applied to one number at a time. The $w_i$ are the output weights and $w_0$ is the output bias. Every demo on this page takes $n = 1$, so $v_i^{\mathsf{T}} x$ is the ordinary product $v_i x$.
+
+Fix a compact set $K \subset \mathbb{R}^n$, a continuous target $f: K \to \mathbb{R}$, and a tolerance $\epsilon > 0$. The theorem says that some width $N$ and some choice of $v_i$, $b_i$, $w_i$ satisfy
+
+$$\sup_{x \in K} |F(x) - f(x)| < \epsilon .$$
+
+The left side is the sup norm, the largest error anywhere on $K$. Compactness is a real condition and not a technicality. A ReLU network is affine outside a bounded interval, so no finite width approximates $\sin$ uniformly on all of $\mathbb{R}$.
+
+Cybenko (1989) proved this for sigmoidal $\sigma$, meaning $\sigma(t) \to 0$ as $t \to -\infty$ and $\sigma(t) \to 1$ as $t \to +\infty$. That version does not cover ReLU, which every demo below uses. Leshno, Lin, Pinkus and Schocken (1993) give the general statement. For a locally bounded and piecewise continuous $\sigma$, the single hidden layer family is dense in $C(K)$ for every compact $K$ if and only if $\sigma$ is not a polynomial. The activation comparison at the bottom of this page shows what happens when $\sigma$ is a polynomial.
+
+## What the theorem does not give
+
+The theorem is an existence result. It says a set of weights exists. It does not say the network is learnable, small, or trustworthy away from the data.
+
+- It bounds nothing about $N$. The width needed can grow without limit as $\epsilon$ shrinks, and the theorem gives no rate.
+- It says nothing about training. Gradient descent starts somewhere and follows a non-convex loss. It may never reach weights that achieve $\epsilon$.
+- It says nothing about generalization. Approximating a known $f$ on all of $K$ is a different problem from fitting $f$ from a finite sample of noisy points.
+- It says nothing about $x$ outside $K$. A network that matches $f$ everywhere on $K$ can do anything beyond it.
+
+[03d-mlp-extrapolation.ipynb](03d-mlp-extrapolation.ipynb) shows the last point. A ReLU network is piecewise linear with finitely many kinks, so past its largest kink the output is affine in the input. Trained on settlement data over the first two years, it predicts 519 mm at 20 years against a true asymptote of 100 mm. The theorem does not forbid this, because 20 years is outside the interval the network was fitted on.
+
+## Building a function from ReLU units
+
+Pick nodes $0 = x_0 < x_1 < \dots < x_N = 1$ and write $s_k = \big(f(x_{k+1}) - f(x_k)\big) / (x_{k+1} - x_k)$ for the slope of $f$ across bin $k$. The piecewise linear interpolant of $f$ at those nodes is a sum of $N$ ReLU units,
+
+$$g(x) = f(x_0) + s_0 \, \mathrm{ReLU}(x - x_0) + \sum_{k=1}^{N-1} (s_k - s_{k-1}) \, \mathrm{ReLU}(x - x_k) ,$$
+
+because each new unit adds a slope change of $s_k - s_{k-1}$ at the node $x_k$ and contributes nothing to its left. The demo below draws $g$ for a sine target. A sum of ReLU units is continuous and piecewise linear, so it is never a staircase. The slider sets $N$.
 
 <div id="relu-construction">
   <canvas id="relu-steps" width="800" height="400"></canvas>
   <div class="controls">
-    <label>Number of Bumps: <span id="bumps-value">3</span>
+    <label>Number of ReLU units: <span id="bumps-value">3</span>
       <input type="range" id="bumps" min="1" max="50" value="3">
     </label>
   </div>
@@ -21,9 +48,11 @@ $$F(x) = \sum_{i=1}^{N} w_i \sigma(v_i x + b_i) + w_0$$
 
 This interactive demo shows how a neural network decomposes functions into ReLU components. The example network uses 5 ReLU neurons to approximate a cubic function.
 
-For a ReLU function ReLU(wx + b), the bias term b determines the activation threshold where the function "turns on."
-The ReLU switches from outputting 0 to outputting the linear part when $wx + b = 0$, which gives us the inflection point at $x = -b/w$.
-You can see this in the visualization: ReLU(x-2) activates at x = 2 (where -b/w = -(-2)/1 = 2), and ReLU(x+1) activates at x = -1 (where -b/w = -(1)/1 = -1).
+The unit $\mathrm{ReLU}(wx + b)$ is zero on one side of $x = -b/w$ and linear on the other. That point is a kink, not an inflection point. $\mathrm{ReLU}(wx+b)$ is convex on the whole line, so its curvature never changes sign. For $w > 0$ the unit is zero to the left of the kink and rises to the right. For $w < 0$ it rises to the left and is zero to the right.
+
+Two of the units below show both cases. $\mathrm{ReLU}(x-2)$ has $w = 1$ and $b = -2$, so its kink is at $x = 2$ and it rises to the right. $\mathrm{ReLU}(-x-1)$ has $w = -1$ and $b = -1$, so its kink is at $x = -1$ and it rises to the left.
+
+These five weights are hand-picked, not fitted. Over $x \in [-3, 5]$ the sum misses the cubic by 15.0 in the sup norm, which is 12.5% of the target's range of 120. Turning units off shows how much each one carries.
 
 <div id="relu-components-demo">
   <h3>Interactive ReLU Decomposition</h3>
@@ -71,7 +100,15 @@ You can see this in the visualization: ReLU(x-2) activates at x = 2 (where -b/w 
 
 ## Activation Function Comparison
 
-This demo compares how different activation functions approximate a target function. Notice how **parabolic activation (y = x²) may seem to work for sine** but **fails for other functions** because it's not part of the UAT family.
+This demo compares three activations on the same target. ReLU and sigmoid are not polynomials, so widening the layer drives the error down. The parabolic activation $\sigma(z) = z^2$ is a polynomial, and widening the layer buys nothing.
+
+The reason is an identity. Expanding one unit gives $w_i (v_i x + b_i)^2 = w_i v_i^2 x^2 + 2 w_i v_i b_i x + w_i b_i^2$, so
+
+$$\sum_{i=1}^{N} w_i (v_i x + b_i)^2 + w_0 = a x^2 + bx + c$$
+
+for every $N$, with $a = \sum_i w_i v_i^2$, $b = 2\sum_i w_i v_i b_i$ and $c = w_0 + \sum_i w_i b_i^2$. Any $(a, b, c)$ is reachable, so a quadratic activation spans exactly the quadratics at any width. The demo draws the least-squares quadratic for this branch, and the unit slider has no effect on it.
+
+On $[0,1]$ that fit matches $\sin(\pi x)$ with a sup-norm error of 0.049, about what 5 ReLU units achieve. On $\sin(2\pi x)$ the same fit reaches 0.941 against an amplitude of 1. The quadratic that minimizes the sup norm does better at 0.683 and is still far from zero. A ReLU sum reaches 0.049 on $\sin(2\pi x)$ with 10 units and 0.005 with 30.
 
 <div id="activation-comparison-demo">
   <canvas id="activation-comparison" width="800" height="400"></canvas>
@@ -86,9 +123,9 @@ This demo compares how different activation functions approximate a target funct
     </label>
     <label>Activation Type:
       <select id="activation-type">
-        <option value="relu">ReLU (UAT)</option>
-        <option value="sigmoid">Sigmoid (UAT)</option>
-        <option value="parabolic">Parabolic (Non-UAT)</option>
+        <option value="relu">ReLU (non-polynomial)</option>
+        <option value="sigmoid">Sigmoid (non-polynomial)</option>
+        <option value="parabolic">Parabolic (polynomial)</option>
       </select>
     </label>
     <label>Number of Units: <span id="units-value">5</span>
@@ -97,11 +134,10 @@ This demo compares how different activation functions approximate a target funct
   </div>
 </div>
 
-### Key Observations
+### What to watch
 
-Watch how different activation functions approximate various target functions:
-- **ReLU & Sigmoid**: Universal approximators (work for all continuous functions)
-- **Parabolic**: Not universal (may work for specific cases but fails generally)
+- **ReLU and sigmoid**: neither is a polynomial, so the family they generate is dense in $C(K)$ for every compact $K$. Raise the unit count and the reported error falls.
+- **Parabolic**: a polynomial, so the family is the quadratics and nothing else. The unit slider changes nothing. Universality belongs to the network family, not to the activation on its own.
 
 <script>
 // ReLU Decomposition Visualization
@@ -130,15 +166,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Note: ReLU(-x-1) means we need to apply ReLU to (-x-1)
     const components = [
       { weight: -20, input: x => -x - 1, label: '-20·ReLU(-x-1)', color: '#E74C3C', 
-        neuronWeight: -20, neuronBias: 1, negateInput: true },
+        neuronWeight: -20, neuronBias: -1, negateInput: true },
       { weight: 5, input: x => x + 1, label: '5·ReLU(x+1)', color: '#3498DB',
-        neuronWeight: 5, neuronBias: -1, negateInput: false },
+        neuronWeight: 5, neuronBias: 1, negateInput: false },
       { weight: -5, input: x => x, label: '-5·ReLU(x)', color: '#9B59B6',
         neuronWeight: -5, neuronBias: 0, negateInput: false },
       { weight: 5, input: x => x - 2, label: '5·ReLU(x-2)', color: '#F39C12',
-        neuronWeight: 5, neuronBias: 2, negateInput: false },
+        neuronWeight: 5, neuronBias: -2, negateInput: false },
       { weight: 15, input: x => x - 3, label: '15·ReLU(x-3)', color: '#1ABC9C',
-        neuronWeight: 15, neuronBias: 3, negateInput: false }
+        neuronWeight: 15, neuronBias: -3, negateInput: false }
     ];
     
     function drawDecomposition() {
@@ -152,8 +188,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const height = canvasHeight - 2 * padding;
       const xMin = -3;
       const xMax = 5;
-      const yMin = -30;
-      const yMax = 40;
+      const yMin = -60;
+      const yMax = 70;
       
       // Draw axes
       ctx.strokeStyle = '#ddd';
@@ -180,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.lineTo(toX(x), padding + height);
         ctx.stroke();
       }
-      for (let y = -20; y <= 20; y += 10) {
+      for (let y = -40; y <= 60; y += 20) {
         ctx.beginPath();
         ctx.moveTo(padding, toY(y));
         ctx.lineTo(padding + width, toY(y));
@@ -224,41 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
-      // Draw sum (partial or full) if checked
-      if (document.getElementById('show-sum').checked) {
-        ctx.strokeStyle = '#FF5722';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        let maxError = 0;
-        
-        // Check which components are selected
-        const activeComponents = [];
-        components.forEach((comp, idx) => {
-          const checkboxId = `show-component-${idx + 1}`;
-          if (document.getElementById(checkboxId).checked) {
-            activeComponents.push(comp);
-          }
-        });
-        
-        for (let i = 0; i <= numPoints; i++) {
-          const x = xMin + i * dx;
-          let ySum = 0;
-          
-          // Sum only the active components
-          activeComponents.forEach(comp => {
-            ySum += comp.weight * relu(comp.input(x));
-          });
-          
-          const yTrue = targetFunc(x);
-          maxError = Math.max(maxError, Math.abs(yTrue - ySum));
-          if (i === 0) ctx.moveTo(toX(x), toY(ySum));
-          else ctx.lineTo(toX(x), toY(ySum));
-        }
-        ctx.stroke();
-        document.getElementById('decomp-error').textContent = maxError.toFixed(4);
-      }
-      
-      // Count active components for legend
+      // Which components are selected
       const activeComponents = [];
       components.forEach((comp, idx) => {
         const checkboxId = `show-component-${idx + 1}`;
@@ -266,6 +268,29 @@ document.addEventListener('DOMContentLoaded', function() {
           activeComponents.push(comp);
         }
       });
+      
+      // The error of the active sum, reported whether or not the sum is drawn
+      let maxError = 0;
+      const drawSum = document.getElementById('show-sum').checked;
+      if (drawSum) {
+        ctx.strokeStyle = '#FF5722';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+      }
+      for (let i = 0; i <= numPoints; i++) {
+        const x = xMin + i * dx;
+        let ySum = 0;
+        activeComponents.forEach(comp => {
+          ySum += comp.weight * relu(comp.input(x));
+        });
+        maxError = Math.max(maxError, Math.abs(targetFunc(x) - ySum));
+        if (drawSum) {
+          if (i === 0) ctx.moveTo(toX(x), toY(ySum));
+          else ctx.lineTo(toX(x), toY(ySum));
+        }
+      }
+      if (drawSum) ctx.stroke();
+      document.getElementById('decomp-error').textContent = maxError.toFixed(4);
       
       // Draw legend
       ctx.font = '12px monospace';
@@ -302,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Draw y-axis tick labels
-      for (let y = -20; y <= 30; y += 10) {
+      for (let y = -40; y <= 60; y += 20) {
         if (y !== 0) {
           ctx.fillText(y.toString(), toX(0) - 25, toY(y) + 3);
         }
@@ -504,7 +529,48 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Step function approximation demo
+// The piecewise-linear interpolant of targetFunc at numUnits+1 equally spaced
+// nodes on [0,1], written as a sum of numUnits ReLU units:
+//   g(x) = f(0) + s0*ReLU(x) + sum_k (s_k - s_{k-1})*ReLU(x - k/N)
+function reluInterpolant(targetFunc, numUnits) {
+  const h = 1 / numUnits;
+  const node = [];
+  for (let k = 0; k <= numUnits; k++) node.push(targetFunc(k * h));
+  const slope = [];
+  for (let k = 0; k < numUnits; k++) slope.push((node[k + 1] - node[k]) / h);
+  const units = [{ w: slope[0], shift: 0 }];
+  for (let k = 1; k < numUnits; k++) units.push({ w: slope[k] - slope[k - 1], shift: k * h });
+  const w0 = node[0];
+  return x => {
+    let s = w0;
+    for (const u of units) s += u.w * Math.max(0, x - u.shift);
+    return s;
+  };
+}
+
+// Least-squares quadratic fit of targetFunc on samples+1 points of [0,1].
+// This is the best a network with activation sigma(z) = z^2 can do at any width.
+function bestQuadratic(targetFunc, samples) {
+  let n = 0, s1 = 0, s2 = 0, s3 = 0, s4 = 0, ty = 0, txy = 0, tx2y = 0;
+  for (let i = 0; i <= samples; i++) {
+    const x = i / samples, y = targetFunc(x), x2 = x * x;
+    n += 1; s1 += x; s2 += x2; s3 += x2 * x; s4 += x2 * x2;
+    ty += y; txy += x * y; tx2y += x2 * y;
+  }
+  const M = [[s4, s3, s2], [s3, s2, s1], [s2, s1, n]];
+  const r = [tx2y, txy, ty];
+  const det = m => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1])
+                 - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+                 + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+  const sub = (m, col, v) => m.map((row, i) => row.map((e, j) => (j === col ? v[i] : e)));
+  const D = det(M);
+  const a = det(sub(M, 0, r)) / D;
+  const b = det(sub(M, 1, r)) / D;
+  const c = det(sub(M, 2, r)) / D;
+  return x => a * x * x + b * x + c;
+}
+
+// ReLU sum demo
 document.addEventListener('DOMContentLoaded', function() {
   const reluCanvas = document.getElementById('relu-steps');
   if (!reluCanvas) return;
@@ -556,39 +622,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     reluCtx.stroke();
     
-    // Draw ReLU step approximation
+    // Draw the ReLU sum. It is continuous and piecewise linear.
+    const approx = reluInterpolant(targetFunc, numBumps);
     reluCtx.strokeStyle = '#FF5722';
     reluCtx.lineWidth = 2;
     reluCtx.beginPath();
-    
-    for (let i = 0; i < numBumps; i++) {
-      const x1 = i / numBumps;
-      const x2 = (i + 1) / numBumps;
-      const xMid = (x1 + x2) / 2;
-      const y = targetFunc(xMid);
-      
-      const px1 = 50 + x1 * width;
-      const px2 = 50 + x2 * width;
+    let maxError = 0;
+    for (let i = 0; i <= 200; i++) {
+      const x = i / 200;
+      const y = approx(x);
+      const px = 50 + x * width;
       const py = canvasHeight / 2 - y * height / 4;
-      
-      if (i === 0) reluCtx.moveTo(px1, py);
-      else {
-        // Connect from previous height
-        reluCtx.lineTo(px1, py);
-      }
-      reluCtx.lineTo(px2, py);
+      if (i === 0) reluCtx.moveTo(px, py);
+      else reluCtx.lineTo(px, py);
+      maxError = Math.max(maxError, Math.abs(targetFunc(x) - y));
     }
     reluCtx.stroke();
     
-    // Compute and display error
-    let maxError = 0;
-    for (let i = 0; i <= 100; i++) {
-      const x = i / 100;
-      const yTrue = targetFunc(x);
-      const bumpIdx = Math.floor(x * numBumps);
-      const xMid = (bumpIdx + 0.5) / numBumps;
-      const yApprox = targetFunc(xMid);
-      maxError = Math.max(maxError, Math.abs(yTrue - yApprox));
+    // Mark the kinks, one per ReLU unit
+    reluCtx.fillStyle = '#FF5722';
+    for (let k = 0; k < numBumps; k++) {
+      const x = k / numBumps;
+      const px = 50 + x * width;
+      const py = canvasHeight / 2 - approx(x) * height / 4;
+      reluCtx.beginPath();
+      reluCtx.arc(px, py, 3, 0, 2 * Math.PI);
+      reluCtx.fill();
     }
     
     // Legend
@@ -596,7 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
     reluCtx.fillStyle = '#2196F3';
     reluCtx.fillText('Target: sin(πx)', canvasWidth - 180, 30);
     reluCtx.fillStyle = '#FF5722';
-    reluCtx.fillText(`ReLU Steps (${numBumps} bumps)`, canvasWidth - 180, 50);
+    reluCtx.fillText(`ReLU sum (${numBumps} units)`, canvasWidth - 180, 50);
     reluCtx.fillStyle = '#666';
     reluCtx.fillText(`Max Error: ${maxError.toFixed(3)}`, canvasWidth - 180, 70);
   }
@@ -709,12 +768,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let approxFunc;
     
     if (activationType === 'relu') {
-      // ReLU step approximation - same as step function demo
-      approxFunc = x => {
-        const bumpIdx = Math.min(Math.floor(x * numUnits), numUnits - 1);
-        const xMid = (bumpIdx + 0.5) / numUnits;
-        return targetFunc(xMid);
-      };
+      // Sum of numUnits ReLU units: the piecewise-linear interpolant
+      approxFunc = reluInterpolant(targetFunc, numUnits);
     } else if (activationType === 'sigmoid') {
       // Sigmoid smooth approximation - smooth transitions between steps
       approxFunc = x => {
@@ -734,28 +789,10 @@ document.addEventListener('DOMContentLoaded', function() {
         return sum;
       };
     } else if (activationType === 'parabolic') {
-      // Parabolic (non-UAT) - attempt to create steps with parabolas
-      // This will fail because parabolas cannot create localized bumps
-      approxFunc = x => {
-        let sum = 0;
-        for (let i = 0; i < numUnits; i++) {
-          const left = i / numUnits;
-          const right = (i + 1) / numUnits;
-          const center = (left + right) / 2;
-          const width = right - left;
-          const height = targetFunc(center);
-          
-          // Try to create a "bump" using parabola
-          // Parabola that's zero at boundaries and peaks at center
-          if (x >= left && x <= right) {
-            const t = (x - left) / width; // Normalize to [0,1]
-            // Parabola: 4t(1-t) peaks at t=0.5 with value 1
-            const parabolaBump = 4 * t * (1 - t);
-            sum += height * parabolaBump;
-          }
-        }
-        return sum;
-      };
+      // sum_i w_i (v_i x + b_i)^2 + w_0 = a x^2 + b x + c for any width,
+      // so the whole family is the quadratics. Draw the least-squares
+      // quadratic on the same 201-point grid the error is measured on.
+      approxFunc = bestQuadratic(targetFunc, 200);
     }
     
     // Draw approximation and compute error
@@ -772,25 +809,24 @@ document.addEventListener('DOMContentLoaded', function() {
     compCtx.stroke();
     compCtx.globalAlpha = 1.0;
     
-    // Legend
+    // Legend. The sigmoid branch evaluates 2N sigmoids but collects into N+1
+    // distinct units sigma(s(x - k/N)), k = 0..N, so it is an N+1 unit network.
     compCtx.font = '14px monospace';
     compCtx.fillStyle = '#2196F3';
-    compCtx.fillText('Target function', canvasWidth - 180, 30);
+    compCtx.fillText('Target function', canvasWidth - 220, 30);
     compCtx.fillStyle = '#FF5722';
-    const activationName = activationType.charAt(0).toUpperCase() + activationType.slice(1);
-    compCtx.fillText(`${activationName} (${numUnits} units)`, canvasWidth - 180, 50);
+    let approxLabel;
+    if (activationType === 'relu') approxLabel = `ReLU (${numUnits} units)`;
+    else if (activationType === 'sigmoid') approxLabel = `Sigmoid (${numUnits + 1} units)`;
+    else approxLabel = 'Parabolic (best quadratic)';
+    compCtx.fillText(approxLabel, canvasWidth - 220, 50);
     compCtx.fillStyle = '#666';
-    compCtx.fillText(`Max Error: ${maxError.toFixed(3)}`, canvasWidth - 180, 70);
+    compCtx.fillText(`Max Error: ${maxError.toFixed(3)}`, canvasWidth - 220, 70);
     
-    // Add warning for non-UAT activation
     if (activationType === 'parabolic') {
       compCtx.fillStyle = '#E74C3C';
       compCtx.font = 'bold 12px monospace';
-      if (targetType === 'sine' && numUnits === 2) {
-        compCtx.fillText('⚠ Seems to work for sine, but NOT universal!', canvasWidth - 300, 90);
-      } else {
-        compCtx.fillText('⚠ Non-UAT: Cannot approximate arbitrary functions!', canvasWidth - 300, 90);
-      }
+      compCtx.fillText('Σ wᵢ(vᵢx+bᵢ)² + w₀ = ax² + bx + c, so width changes nothing', canvasWidth - 420, 90);
     }
   }
   

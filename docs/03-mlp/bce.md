@@ -6,11 +6,9 @@ A loss function measures how "good" a model's predictions are compared to the ac
 
 Binary classification problems are any problem where the output is one of two classes, for example:
 
-Spam vs. Not Spam
-
-Yes vs. No
-
-Class 1 vs. Class 0
+- spam or not spam
+- yes or no
+- class 1 or class 0
 
 ### The Core Intuition
 
@@ -30,11 +28,11 @@ $$L = -[y \cdot \log(p) + (1 - y) \cdot \log(1 - p)]$$
 
 Where:
 
-$y$ (gamma): The true label (it's either 0 or 1).
+$y$: the true label, either 0 or 1.
 
-$p$ (rho): The predicted probability from your model that the label is 1 (a value between 0.0 and 1.0).
+$p$: the probability the model assigns to the label being 1, a number between 0 and 1.
 
-$\log$: The natural logarithm.
+$\log$: the natural logarithm.
 
 ### How the Formula Works: A Breakdown
 
@@ -82,13 +80,26 @@ Both cases rely on the $-\log(x)$ function. As the predicted probability of the 
 
 This graph shows exactly why BCE works: it creates a massive penalty for being confidently wrong, which provides a strong "gradient" or "push" for the model to learn from its worst mistakes.
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Interactive Binary Cross Entropy Loss Demo</title>
+### The gradient
+
+Differentiating $L = -[y\log p + (1-y)\log(1-p)]$ with respect to $p$ gives
+
+$$\frac{\partial L}{\partial p} = -\frac{y}{p} + \frac{1-y}{1-p} = \frac{p - y}{p(1-p)} .$$
+
+This blows up as $p \to 0$ with $y = 1$, or as $p \to 1$ with $y = 0$. A confidently wrong prediction produces an unbounded gradient.
+
+Networks produce a logit $z$ and pass it through a sigmoid, $p = \sigma(z) = 1/(1+e^{-z})$. Since $\sigma'(z) = p(1-p)$, the chain rule gives
+
+$$\frac{\partial L}{\partial z} = \frac{p - y}{p(1-p)} \cdot p(1-p) = p - y .$$
+
+The $p(1-p)$ factors cancel. This cancellation is why BCE is paired with a sigmoid output. The gradient at the logit is the plain residual $p - y$. It is bounded in $[-1, 1]$, it is zero only when the prediction is exact, and it stays large when the model is confidently wrong.
+
+Squared error on the same sigmoid output loses that property. With $L = (p - y)^2$ the chain rule gives $\partial L / \partial z = 2(p-y)\,p(1-p)$. The factor $p(1-p)$ goes to 0 at both extremes, so a confidently wrong unit receives almost no gradient and learns nothing.
+
+## Interactive demo
+
 <!-- Load Plotly.js from CDN -->
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
 
 <!-- CSS for Styling -->
 <style>
@@ -341,17 +352,14 @@ This graph shows exactly why BCE works: it creates a massive penalty for being c
         text-align: center;
     }
 </style>
-</head>
-<body>
 
 <div id="bce-container">
-    <h2>Interactive Binary Cross Entropy Loss Demo</h2>
-    <p>See how BCE loss "punishes" wrong predictions through both visual intuition and mathematical precision. The red "glow" shows punishment intensity!</p>
+    <p>The slider sets the probability the model assigns to the true class at the site farthest from the decision boundary at Feature 1 = 4. Sites nearer the boundary sit proportionally closer to 0.5. Raising the slider lowers the loss at every site. The red glow shows the size of each site's loss.</p>
 
     <!-- Controls -->
     <div class="bce-controls">
         <div class="bce-slider-group">
-            <label for="bce-confidenceSlider">Model Confidence: <span id="bce-confidenceValue">70</span>%</label>
+            <label for="bce-confidenceSlider">Model confidence in the true class: <span id="bce-confidenceValue">70</span>%</label>
             <input type="range" id="bce-confidenceSlider" min="10" max="90" value="70" step="5">
         </div>
         <button id="bce-solveButton" class="bce-solve-button">Show Optimal</button>
@@ -474,9 +482,13 @@ This graph shows exactly why BCE works: it creates a massive penalty for being c
         yaxis: { title: 'Feature 2 (Groundwater Level)', range: [0, 7], scaleanchor: "x", scaleratio: 1 }
     };
 
+    // Clamp once. Every reported number uses the clamped p.
+    function clampP(prediction) {
+        return Math.max(0.001, Math.min(0.999, prediction));
+    }
+
     // Calculate BCE loss
-    function calculateBCE(trueLabel, prediction) {
-        const p = Math.max(0.001, Math.min(0.999, prediction));
+    function calculateBCE(trueLabel, p) {
         return -(trueLabel * Math.log(p) + (1 - trueLabel) * Math.log(1 - p));
     }
 
@@ -494,25 +506,34 @@ This graph shows exactly why BCE works: it creates a massive penalty for being c
                     // High confidence when wrong
                     prediction = point.trueLabel === 1 ? 0.1 : 0.9;
                     break;
-                default:
-                    // Simulate based on position and confidence
-                    const baseCorrect = confidence / 100;
-                    const baseWrong = (100 - confidence) / 100;
-                    
-                    // Simple decision boundary logic: points with x > 4 tend to be predicted differently
-                    if (point.x > 4) {
-                        prediction = point.trueLabel === 1 ? baseCorrect : baseWrong;
-                    } else {
-                        prediction = point.trueLabel === 1 ? baseWrong : baseCorrect;
-                    }
+                default: {
+                    // The slider is the probability given to the true class at the
+                    // site farthest from the boundary at x = 4. Distance from that
+                    // boundary scales how far a site moves away from 0.5. Every
+                    // site moves in the same direction, so raising the slider
+                    // lowers the loss everywhere.
+                    const margin = confidence / 100 - 0.5;
+                    const reach = 0.3 + 0.7 * Math.abs(point.x - 4) / 3;
+                    prediction = 0.5 + (point.trueLabel === 1 ? margin : -margin) * reach;
+                }
             }
             
+            prediction = clampP(prediction);
             const loss = calculateBCE(point.trueLabel, prediction);
-            const isCorrect = (prediction > 0.5 && point.trueLabel === 1) || 
-                             (prediction < 0.5 && point.trueLabel === 0);
+            // null means the prediction is exactly 0.5, so the model makes no call
+            const isCorrect = prediction > 0.5 ? point.trueLabel === 1
+                            : prediction < 0.5 ? point.trueLabel === 0
+                            : null;
             
             return { ...point, prediction, loss, isCorrect };
         });
+    }
+
+    // Label for a site given its isCorrect state
+    function verdict(isCorrect, long) {
+        if (isCorrect === null) return long ? '— p = 0.5, no decision' : 'Tied at 0.5';
+        if (isCorrect) return long ? '✓ Correct prediction' : 'Correct';
+        return long ? '✗ Wrong prediction' : 'Wrong';
     }
 
     // Update calculation display
@@ -533,7 +554,7 @@ BCE = -[${y} × log(${p}) + ${1-y} × log(${(1-point.prediction).toFixed(3)})]
     = -[${y} × ${Math.log(point.prediction).toFixed(3)} + ${1-y} × ${Math.log(1-point.prediction).toFixed(3)}]
     = ${loss}
 
-${point.isCorrect ? '✓ Correct prediction' : '✗ Wrong prediction'}
+${verdict(point.isCorrect, true)}
 ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'}`;
         
         document.getElementById('bce-calcContent').textContent = calculation;
@@ -572,10 +593,10 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
             type: 'scatter',
             marker: { 
                 size: 15, 
-                color: processedData.map(p => p.isCorrect ? '#10b981' : '#ef4444'),
+                color: processedData.map(p => p.isCorrect === null ? '#9ca3af' : p.isCorrect ? '#10b981' : '#ef4444'),
                 line: { color: 'white', width: 2 }
             },
-            text: processedData.map(p => `${p.name}<br>Predicted: ${p.prediction.toFixed(3)}<br>${p.isCorrect ? 'Correct' : 'Wrong'}`),
+            text: processedData.map(p => `${p.name}<br>Predicted: ${p.prediction.toFixed(3)}<br>${verdict(p.isCorrect, false)}`),
             hovertemplate: '%{text}<extra></extra>'
         };
         
@@ -596,8 +617,8 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
             mode: 'lines',
             type: 'scatter',
             fill: 'toself',
-            fillcolor: point.isCorrect ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)',
-            line: { color: point.isCorrect ? '#10b981' : '#ef4444', width: 2 },
+            fillcolor: point.isCorrect === null ? 'rgba(156, 163, 175, 0.6)' : point.isCorrect ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)',
+            line: { color: point.isCorrect === null ? '#9ca3af' : point.isCorrect ? '#10b981' : '#ef4444', width: 2 },
             hoverinfo: 'none'
         }));
         
@@ -614,7 +635,7 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
                 color: processedData.map(p => p.trueLabel ? '#dc2626' : '#059669'),
                 line: { color: 'white', width: 2 }
             },
-            text: processedData.map(p => `${p.name}<br>Loss: ${p.loss.toFixed(3)}<br>${p.isCorrect ? 'Correct' : 'Wrong'}`),
+            text: processedData.map(p => `${p.name}<br>Loss: ${p.loss.toFixed(3)}<br>${verdict(p.isCorrect, false)}`),
             hovertemplate: '%{text}<extra></extra>'
         };
         
@@ -636,8 +657,8 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
         
         // Plot 4: Loss curves (mathematical view)
         const probRange = Array.from({length: 100}, (_, i) => (i + 1) / 100);
-        const lossWhenY1 = probRange.map(p => calculateBCE(1, p));
-        const lossWhenY0 = probRange.map(p => calculateBCE(0, p));
+        const lossWhenY1 = probRange.map(p => calculateBCE(1, clampP(p)));
+        const lossWhenY0 = probRange.map(p => calculateBCE(0, clampP(p)));
         
         const curve1 = {
             x: probRange,
@@ -679,7 +700,7 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
         });
         
         // Update status message
-        let statusMsg = `Total Loss: ${totalLoss.toFixed(2)}`;
+        let statusMsg = `Sum over 6 sites: ${totalLoss.toFixed(2)}  (mean ${(totalLoss / processedData.length).toFixed(3)})`;
         switch(mode) {
             case 'optimal':
                 statusMsg += ' - Optimal! Model is confident when correct ✓';
@@ -760,6 +781,3 @@ ${point.loss < 0.5 ? 'Low loss' : point.loss < 1.5 ? 'Medium loss' : 'High loss'
     }
 })();
 </script>
-
-</body>
-</html>

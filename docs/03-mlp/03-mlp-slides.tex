@@ -3,7 +3,7 @@
 % CC BY-NC-SA 4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)
 %**************************************************************************************
 
-\documentclass[notes]{beamer}
+\documentclass{beamer}
 
 \mode<presentation> {
 
@@ -30,15 +30,10 @@
 
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmin}{arg\,min}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\usepackage{bm}
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
-\usepackage{breqn}
-\usepackage{cleveref}
 \usepackage{graphicx} % for figures
 \usepackage[labelsep=space,tableposition=top]{caption}
-\renewcommand{\figurename}{Fig.} 
-\usepackage{caption,subcaption}% http://ctan.org/pkg/{caption,subcaption}
+\renewcommand{\figurename}{Fig.}
 \usepackage{xcolor}
 
 % To print 2 slides on a page
@@ -65,7 +60,7 @@
 University of Texas at Austin \\
 \medskip
 \textit{
-  \url{krishnak@utexas.edu}} % Your email address
+  \href{mailto:krishnak@utexas.edu}{krishnak@utexas.edu}} % Your email address
 }
 \date{} % Date, can be changed to a custom date
 
@@ -96,16 +91,21 @@ University of Texas at Austin \\
 \textbf{Problem:} Predict settlement from sparse field measurements.
 
 \mode<beamer>{
-Terzaghi consolidation theory:
+Terzaghi's one-dimensional theory gives the degree of consolidation as a series, with $M = (2m+1)\pi/2$ and $T_v = c_v t / H_{dr}^2$:
+\begin{equation*}
+U(T_v) = 1 - \sum_{m=0}^{\infty} \frac{2}{M^2} e^{-M^2 T_v}
+\end{equation*}
+
+We generate data from a single exponential, which approximates the series:
 \begin{equation*}
 S(t) = S_{\text{final}}(1 - e^{-\alpha t})
 \end{equation*}
 
-Parameters:
 \begin{itemize}
 \item $S_{\text{final}} = 100$ mm (ultimate settlement)
-\item $\alpha = 0.5$ /year (consolidation coefficient)
+\item $\alpha = 0.5$ yr$^{-1}$ (rate constant, $\alpha = \pi^2 c_v / 4H_{dr}^2$ for the first mode)
 \item Sparse data: 10 measurements over 10 years
+\item The first mode alone reads $U \approx 1 - (8/\pi^2)e^{-\pi^2 T_v/4}$. The single exponential drops that $8/\pi^2$ prefactor.
 \end{itemize}
 }
 \mode<handout>{
@@ -180,7 +180,7 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 \vspace{3cm}
 }
 
-\textbf{Problem:} Linear networks can only learn $y = mx + b$, but $\sin(\pi x)$ is curved!
+\textbf{Problem:} Linear networks can only learn $y = mx + b$, but $S(t) = 100(1 - e^{-0.5t})$ is curved.
 
 \end{frame}
 
@@ -206,11 +206,11 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 
 \textbf{Tanh:} $\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ (squashes to (-1,1))
 
-\textbf{ReLU:} $f(x) = \max(0, x)$ (efficient, prevents vanishing gradients)
+\textbf{ReLU:} $f(x) = \max(0, x)$, cheap to compute. Gradient 1 for $x > 0$, so no saturation on the positive side. Gradient 0 for $x < 0$. Not differentiable at 0, where frameworks return 0 by convention.
 
-\textbf{Leaky ReLU:} $f(x) = \max(\alpha x, x)$ (prevents dead neurons)
+\textbf{Leaky ReLU:} $f(x) = \max(\alpha_L x, x)$ with $0 < \alpha_L \ll 1$, typically 0.01 (prevents dead neurons). The leak $\alpha_L$ is not the consolidation rate constant $\alpha$.
 
-\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/relu/}{\beamergotobutton{ReLU Demo}}
+\href{https://kks32-courses.github.io/ai-geotech/03-mlp/relu.html}{\beamergotobutton{ReLU Demo}}
 \end{frame}
 %------------------------------------------------
 
@@ -219,7 +219,7 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.8\textwidth]{figs/activation-functions.png}
+	\includegraphics[width=0.68\textwidth]{figs/activation-functions.png}
 	\caption*{Common activation functions}
 \end{figure}
 
@@ -232,7 +232,7 @@ This is equivalent to: $h_2 = W_{eq} x + b_{eq}$ (still linear!)
 \begin{frame}
 \frametitle{Universal Approximation Theorem}
 
-\textbf{Theorem (Cybenko, 1989):} A single hidden layer network with sufficient neurons can approximate any continuous function to arbitrary accuracy.
+\textbf{Theorem (Cybenko, 1989):} A single hidden layer network with a sigmoidal activation approximates any continuous function on a compact domain to any accuracy. Leshno et al. (1993) extended this to every continuous non-polynomial activation.
 
 \mode<beamer>{
 \begin{equation*}
@@ -245,12 +245,9 @@ F(x) = \sum_{i=1}^{N} w_i \sigma(v_i x + b_i) + w_0
 \vspace{3cm}
 }
 
-\textbf{Key Questions:}
-\begin{itemize}
-\item How many neurons $N$ do we need?
-\item Is this practical?
-\item Can we verify experimentally?
-\end{itemize}
+\textbf{The theorem says a network exists.} It gives no bound on $N$, no guarantee that training finds the parameters, and no control outside the domain (see 03d).
+
+\textbf{Question:} How many neurons does the consolidation curve need? We measure that next.
 
 \end{frame}
 
@@ -259,7 +256,7 @@ F(x) = \sum_{i=1}^{N} w_i \sigma(v_i x + b_i) + w_0
 \frametitle{Single Hidden Layer Architecture}
 
 For 1D input $x$, a single-layer network with $N_h$ hidden neurons:
- \begin{minipage}[t]{0.48\textwidth}
+ \begin{minipage}[t]{0.55\textwidth}
 \mode<beamer>{
 \begin{align*}
 \mathbf{z}^{(1)} &= W^{(1)}x + \mathbf{b}^{(1)} \quad \text{(pre-activation)} \\
@@ -273,10 +270,10 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 }
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.48\textwidth}
+\begin{minipage}[t]{0.42\textwidth}
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\linewidth]{figs/single-layer-nn2.png}
+	\includegraphics[width=0.95\linewidth]{figs/single-layer-nn2.png}
 	\caption*{Single hidden layer neural network}
 \end{figure}
 \end{minipage}
@@ -291,11 +288,11 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.85\textwidth]{figs/consolidation-tanh-fit.png}
+	\includegraphics[width=0.68\textwidth]{figs/consolidation-tanh-fit.png}
 	\caption*{Tanh activation fits consolidation curve smoothly}
 \end{figure}
 
-\textbf{Success:} 10 neurons sufficient for smooth approximation of bounded function.
+\textbf{Result:} 10 neurons give a smooth fit that flattens at 94 mm, 6 mm below the 100 mm asymptote.
 
 \end{frame}
 
@@ -305,11 +302,11 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{figs/consolidation-width-comparison.png}
+	\includegraphics[width=0.79\textwidth]{figs/consolidation-width-comparison.png}
 	\caption*{Consolidation approximation: 1, 5, 10, 20, 50 neurons}
 \end{figure}
 
-\textbf{Finding:} 10-20 neurons optimal. Diminishing returns beyond.
+\textbf{Finding:} MSE is 9.07 at 10 neurons, 1.41 at 20, and 1.29 at 50. Returns flatten past 20 neurons.
 
 \end{frame}
 
@@ -321,11 +318,11 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.85\textwidth]{figs/consolidation-activation-comparison.png}
-	\caption*{Tanh naturally saturates at $S_{\text{final}} = 100$ mm}
+	\includegraphics[width=0.70\textwidth]{figs/consolidation-activation-comparison.png}
+	\caption*{Test MSE over 0 to 10 years: tanh 2.8, sigmoid 3.0, ReLU 20.5}
 \end{figure}
 
-\textbf{Rule:} Bounded physical problems $\to$ Tanh/Sigmoid. Unbounded $\to$ ReLU.
+\textbf{Rule:} The output layer is linear. The learned output weights set the asymptote, and the range of the activation does not. Tanh and sigmoid stay bounded outside the data. ReLU grows without limit and reaches 519 mm at 20 years in 03d.
 
 \end{frame}
 
@@ -341,7 +338,7 @@ z^{(2)} &= W^{(2)}\mathbf{h} + b^{(2)} \quad \text{(output layer)} \\
 \mode<beamer>{
 Loss function (MSE):
 \begin{equation*}
-\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N \left(u_{NN}(x_i; \theta) - u_i\right)^2
+\mathcal{L}(\theta) = \frac{1}{N} \sum_{i=1}^N \left(S_i - \hat{S}(t_i; \theta)\right)^2
 \end{equation*}
 
 Optimization problem:
@@ -451,7 +448,7 @@ Optimization problem:
 		\includegraphics[width=\textwidth]{figs/forward-mode-ad.png}
 	\end{figure}
 	\centering
-	\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/ad-graph/}{\beamergotobutton{AD Demo}}
+	\href{https://kks32-courses.github.io/ai-geotech/03-mlp/ad.html}{\beamergotobutton{AD Demo}}
 \end{frame}
 
 %------------------------------------------------
@@ -543,7 +540,7 @@ Optimization problem:
 		\textbf{Reverse mode is the clear winner!}
 	\end{center}
 	\centering
-	\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/ad}{\beamergotobutton{AD Notebook}}
+	\href{https://kks32-courses.github.io/ai-geotech/03-mlp/ad.html}{\beamergotobutton{AD Notebook}}
 	
 \end{frame}
 
@@ -581,7 +578,7 @@ where $\eta$ is the learning rate.
 	\includegraphics[width=0.9\linewidth]{figs/sgd.png}
 	\caption*{Gradient descent optimization}
 \end{figure}
-\href{https://kks32-courses.github.io/ut-portugal-sciml/00-mlp/sgd/}{\beamergotobutton{SGD Demo}}
+\href{https://kks32-courses.github.io/ai-geotech/03-mlp/sgd.html}{\beamergotobutton{SGD Demo}}
 \end{minipage}
 
 \end{frame}
@@ -593,7 +590,7 @@ where $\eta$ is the learning rate.
 \textbf{Regression (Consolidation):} Mean Squared Error
 \mode<beamer>{
 \begin{equation*}
-\mathcal{L}_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^N (S_i - \hat{S}_i)^2
+\mathcal{L}_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^N \left(S_i - \hat{S}(t_i; \theta)\right)^2
 \end{equation*}
 }
 
@@ -617,7 +614,7 @@ where $\eta$ is the learning rate.
 \end{itemize}
 
 \centering
-\href{https://kks32-courses.github.io/ai-geotech/03-mlp/bce}{\beamergotobutton{BCE Demo}}
+\href{https://kks32-courses.github.io/ai-geotech/03-mlp/bce.html}{\beamergotobutton{BCE Demo}}
 
 \end{frame}
 
@@ -625,15 +622,17 @@ where $\eta$ is the learning rate.
 \begin{frame}
 \frametitle{Optimizer Comparison}
 
-\textbf{Test on consolidation:} SGD vs Momentum vs Adam
+\textbf{Test on consolidation:} SGD vs Momentum vs Adam, all at lr = 0.01
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.95\textwidth]{figs/consolidation-optimizers.png}
-	\caption*{Adam converges fastest, SGD slowest}
+	\includegraphics[width=0.62\textwidth]{figs/consolidation-optimizers.png}
+	\caption*{Consolidation fit and training loss. The panel titles in the figure are wrong: momentum does not converge, and its prediction is flat at 77 mm past 3 years.}
 \end{figure}
 
-\textbf{Recommendation:} Adam (lr=0.01) for most problems.
+\textbf{Result:} 03c gives final losses of 0.47 for plain gradient descent, 0.57 for Adam and 1067 for momentum. Plain gradient descent wins on final loss, Adam gets close in fewer epochs, and momentum diverges early.
+
+\textbf{Recommendation:} A shared learning rate is not a fair comparison. Each optimizer needs its own rate. Start from Adam at lr $10^{-3}$, and use $10^{-2}$ for small smooth 1D fits.
 
 \end{frame}
 
@@ -641,15 +640,15 @@ where $\eta$ is the learning rate.
 \begin{frame}
 \frametitle{Width vs Approximation Quality}
 
-\textbf{Hypothesis:} More neurons → better approximation
-
-\textbf{Experiment:} Train networks with 5, 10, 20, 50 neurons
+\textbf{Hypothesis:} More neurons $\to$ better approximation. Single hidden layer, 5 to 50 neurons, target $u(x) = \sin(\pi x)$ on $[0,1]$. The consolidation slides use a different target.
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.6\linewidth]{figs/width-quality.png}
-	\caption*{Approximation quality vs network width}
+	\includegraphics[width=0.45\linewidth]{figs/width-quality.png}
+	\caption*{MSE 0.000166, 0.000176, 0.000156, 0.000632 at 5, 10, 20, 50 neurons}
 \end{figure}
+
+\textbf{Result:} Fifty neurons is four times worse than twenty. The hypothesis fails here.
 \end{frame}
 
 
@@ -720,7 +719,7 @@ $x_1$ & $x_2$ & $y$ \\
 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.8\textwidth]{figs/xor-problem.png}
+	\includegraphics[width=0.62\textwidth]{figs/xor-problem.png}
 	\caption*{XOR is not linearly separable}
 \end{figure}
 
@@ -776,12 +775,12 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3)
 \textbf{XOR Decomposition:}
 \mode<beamer>{
 \begin{align*}
-h_1 &= \sigma(\text{weights}) \quad \text{($\approxeq$ OR gate)} \\
-h_2 &= \sigma(\text{weights}) \quad \text{($\approxeq$ AND gate)} \\
-y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
+h_1 &= \sigma(20x_1 + 20x_2 - 10) \quad \text{(OR)} \\
+h_2 &= \sigma(20x_1 + 20x_2 - 30) \quad \text{(AND)} \\
+y &= \sigma(20h_1 - 20h_2 - 10)
 \end{align*}
 
-\textbf{Result:} XOR = (OR) AND (NOT AND) = compositional solution!
+\textbf{Result:} $x_1 \oplus x_2 = (x_1 \vee x_2) \wedge \neg(x_1 \wedge x_2)$. Substitute the four inputs. Each $\sigma(\pm 10)$ rounds to 1 or 0.
 }
 \mode<handout>{
 \vspace{3cm}
@@ -803,7 +802,7 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 	\caption*{Shallow (100 neurons) vs Deep (4 layers, 25 each) networks}
 \end{figure}
 
-\textbf{Result:} Deep networks achieve better performance with fewer parameters.
+\textbf{Result:} The deep network reaches MSE 0.0006 against 0.0421 for the shallow one, using 2026 parameters against 301.
 
 \end{frame}
 
@@ -827,7 +826,7 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 \end{tabular}
 \end{center}
 
-\textbf{Lesson:} XOR taught us that depth is necessity, not luxury.
+\textbf{Lesson:} A perceptron with no hidden layer cannot represent XOR. One hidden layer can. Minsky and Papert showed the limit of the perceptron, and training multilayer networks stayed open until backpropagation.
 
 \end{frame}
 
@@ -840,7 +839,7 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.85\textwidth]{figs/consolidation-shallow-deep.png}
-	\caption*{Both work for smooth functions; Deep more parameter-efficient}
+	\caption*{Both fit the data. Shallow uses 31 parameters, deep uses 321.}
 \end{figure}
 
 \textbf{When to go deep?} Complex boundaries, high-frequency, images. Otherwise 1-2 layers sufficient.
@@ -853,8 +852,8 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 
 \textbf{1. Representation Efficiency}
 \begin{itemize}
-\item Shallow: May need exponentially many neurons
-\item Deep: Hierarchical composition is exponentially more efficient
+\item For some function families a shallow network needs exponentially more neurons than a deep one (Telgarsky 2016, Eldan and Shamir 2016)
+\item For the smooth 1D targets in this deck the two are comparable
 \end{itemize}
 
 \textbf{2. Feature Hierarchy}
@@ -890,16 +889,16 @@ y &= \sigma(v_1 h_1 + v_2 h_2 + b_3) \quad \text{($\approxeq$ OR AND NOT)}
 
 \textbf{Training:}
 \begin{itemize}
-\item Optimizer: Adam (lr=0.01)
+\item Optimizer: Adam, lr $10^{-3}$ by default, $10^{-2}$ for this 1D fit
 \item Epochs: 2000-3000
 \item Monitor validation loss for overfitting
 \end{itemize}
 
 \textbf{Results:}
 \begin{itemize}
-\item MSE < 2.0 mm$^2$
-\item Smooth predictions over entire domain
-\item Generalizes well to test data
+\item Error against the true curve $\approx 2$ to 3 mm$^2$ with tanh
+\item Smooth predictions inside the training range
+\item Outside that range the fit is unreliable (03d)
 \end{itemize}
 
 \end{frame}

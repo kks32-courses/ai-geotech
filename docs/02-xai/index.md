@@ -1,6 +1,8 @@
-# Module 3: Explainable AI
+# 2. Explainable AI
 
-This module explains what the tree models of Module 2 have learned. SHAP attributes each
+Syllabus: Module 3, Day 1.
+
+This module explains what the tree models of Chapter 1 have learned. SHAP attributes each
 prediction to its input features. The Explainable Boosting Machine is a glass-box model
 whose shape functions can be read, checked against soil mechanics, and edited. Both use
 the Christchurch lateral spreading dataset.
@@ -23,4 +25,4 @@ completed notebook.
 ## Data
 
 - [RF_YN_Model3.csv](../01-dtree/RF_YN_Model3.csv): the lateral spreading dataset
-  described in [Modules 1 and 2](../01-dtree/index.md).
+  described in [Chapter 1](../01-dtree/index.md).

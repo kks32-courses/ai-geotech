@@ -296,16 +296,20 @@ h_t = \tanh(W_{xh} x_t + W_{hh} h_{t-1} + b_h)
 \vspace{0.5em}
 
 \begin{equation}
-\frac{\partial L}{\partial W} = \prod_{t=1}^{T} \frac{\partial h_t}{\partial h_{t-1}} \frac{\partial h_t}{\partial W}
+\frac{\partial L}{\partial W} = \sum_{t=1}^{T} \frac{\partial L}{\partial h_T}
+\left( \prod_{k=t+1}^{T} \frac{\partial h_k}{\partial h_{k-1}} \right)
+\frac{\partial h_t}{\partial W}
 \end{equation}
 
-If $\left|\frac{\partial h_t}{\partial h_{t-1}}\right| < 1$: gradient $\to 0$ as $T \to \infty$
+If $\left|\frac{\partial h_k}{\partial h_{k-1}}\right| < 1$, the inner product decays as
+$T - t$ grows, so the early steps contribute nothing to the gradient
 
 \vspace{1em}
 
 \textbf{Impact:} Can't remember events 10+ steps ago
 
-\textbf{For liquefaction:} Need to remember 100s-1000s of loading cycles!
+\textbf{For liquefaction:} the memory horizon here is one window, 800 steps at
+0.013\,s, that is 10.4\,s. The LSTM state resets at every window.
 
 \vspace{0.5em}
 
@@ -613,12 +617,15 @@ C_t = f_t \odot C_{t-1} + i_t \odot \tilde{C}_t
 \mode<beamer>{
 \textbf{Input Features:}
 \begin{enumerate}
-\item Normalized time: $T_{\text{norm}} = t/t_{\text{final}}$
+\item Normalized time: $T_{\text{norm}} = t/600\,\text{s}$, a fixed constant, so no
+trial leaks its total duration
 \item Normalized shear stress: $\tau_{\text{norm}} = \tau/\sigma'_0$
 \item Relative density: $D_r$ (constant)
 \end{enumerate}
 
-\textbf{Output:} Pore pressure ratio $r_u \in [0, 1]$
+\textbf{Output:} pore pressure ratio $r_u \in [0, 1]$, predicted through a tanh unit
+whose range is $(-1, 1)$, so the model can go negative and never reaches $r_u = 1$
+exactly
 
 \vspace{0.5em}
 
@@ -787,9 +794,9 @@ Window length: 800 timesteps $\approx$ 2 loading cycles
 
 \textbf{Training Set:}
 \begin{itemize}
-\item 10 trials from Experiment 9
-\item $\sim$125,000 training samples
-\item 20\% validation split
+\item 14 trials: 4 from Exp 8, 10 from Exp 9
+\item 70,631 windows at stride 4
+\item Validation: 2 whole trials held out before windowing
 \end{itemize}
 
 \vspace{0.5em}
@@ -813,7 +820,7 @@ Window length: 800 timesteps $\approx$ 2 loading cycles
 \textbf{Data Preprocessing:}
 \begin{itemize}
 \item Augment with 900 static timesteps (initial state)
-\item Normalize time, stress, and $D_r$ to [0, 1]
+\item Normalize time by a fixed 600\,s, stress by $\sigma'_0$, $D_r$ by 100
 \end{itemize}
 
 \vspace{0.5em}
@@ -832,14 +839,13 @@ Window length: 800 timesteps $\approx$ 2 loading cycles
 \textbf{Hyperparameters:}
 \begin{itemize}
 \item Optimizer: Adam, Learning rate: 0.0002
-\item Batch size: 32, Epochs: 50
+\item Batch size: 32, Epochs: 12
 \item Loss: Mean Squared Error (MSE)
 \item Early stopping: patience = 1000
 \end{itemize}
 
 \vspace{0.5em}
 
-\textbf{Hardware:} Apple Silicon GPU (MPS), PyTorch 2.7, Training time: $\sim$1 hour
 }
 \mode<handout>{
 \vspace{3cm}
@@ -864,7 +870,7 @@ Window length: 800 timesteps $\approx$ 2 loading cycles
 \textbf{Observations:}
 \begin{itemize}
 \item Rapid initial learning
-\item Validation tracks training (no overfitting)
+\item Validation is two whole held-out trials, so the gap is a real generalisation gap
 \item Smooth convergence
 \end{itemize}
 }
@@ -892,27 +898,31 @@ Window length: 800 timesteps $\approx$ 2 loading cycles
 
 \begin{columns}[T]
 \column{0.5\textwidth}
-\textbf{Test Set Metrics:}
+\textbf{Test Set Metrics:} pooled over all five held-out trials, 50{,}687 windows
+
 \begin{table}
 \centering
-\begin{tabular}{lc}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Metric} & \textbf{Value} \\
+ & \textbf{Pooled} & \textbf{Exp 8} & \textbf{Exp 9} \\
 \midrule
-MSE & TBD \\
-MAE & TBD \\
-$R^2$ & TBD \\
+MSE & 0.116 & 0.029--0.037 & 0.041--0.310 \\
+MAE & 0.268 & 0.123--0.158 & 0.184--0.498 \\
+$R^2$ & 0.06 & 0.69--0.72 & $-2.32$ to $-1.22$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+\footnotesize From a 12-epoch run. The model tracks the Experiment-8 modulated-sine
+trials and fails on the Experiment-9 transient trials. Twelve epochs underfits.
+\normalsize
+
 \mode<beamer>{
 \textbf{What LSTM Captures:}
 \begin{itemize}
-\item \checkmark  Shielding effect
-\item \checkmark  Pore pressure buildup rate
-\item \checkmark  Time to liquefaction
-\item \checkmark  Density effects
+\item \checkmark  Shielding effect, on the Experiment-8 trials
+\item \checkmark  Pore pressure buildup rate, on the Experiment-8 trials
+\item $\times$ Experiment-9 transient loading, not yet
 \end{itemize}
 }
 

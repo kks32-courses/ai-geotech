@@ -39,7 +39,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Data Processing and Exploration (EDA, missing data, normalization)
 - Feature Engineering for Geotechnical Data
 
-**Demo examples:** Perform Exploratory Data Analysis (EDA) on borehole data and preprocess (clean) landslide data for modeling.
+**Demo examples:** Perform exploratory data analysis on the Christchurch lateral spreading dataset: 7,291 sites described by groundwater depth, distance to the free face, ground slope, and peak ground acceleration.
 
 **Materials**
 - Slides: [Introduction and exploratory analysis](01-dtree/01-intro-eda-slides.pdf), [Exploratory data analysis](01-dtree/01-eda-slides.pdf)
@@ -55,10 +55,10 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - XGBoost
 - Evaluation metrics
 
-**Hands-On:** Build a decision tree classifier for landslide susceptibility mapping and train a logistic regression model for soil type prediction.
+**Hands-On:** Build decision tree, random forest, and XGBoost classifiers for earthquake-induced lateral spreading.
 
 **Materials**
-- Slides: [Tree-based classification](01-dtree/01-classification-slides.pdf)
+- Slides: [Handout: limitations of ML in geotechnics](01-dtree/01-ml-limitations-handout.pdf)
 - Notebook: [Decision tree, random forest, XGBoost](01-dtree/01b-classification.ipynb)
 
 ### Module 3: Explainable AI (XAI) and Glass-Box Models
@@ -70,7 +70,7 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - SHAP (SHapley Additive exPlanations)
 - Explainable Boosting Machines (EBM)
 
-**Hands-On:** Train a Random Forest model to predict landslides and interpret the results using SHAP values and feature importance.
+**Hands-On:** Interpret the lateral spreading random forest with SHAP values and feature importance, then train an Explainable Boosting Machine on the same data.
 
 **Materials**
 - Notebook: [SHAP section of the classification notebook](01-dtree/01b-classification.ipynb)
@@ -156,13 +156,13 @@ Apply a range of machine learning and deep learning algorithms (including regres
 - Retrieval-Augmented Generation (RAG)
 - Geotechnical Applications (report analysis, Q&A on codes).
 
-**Hands-On:** Create a Q&A chatbot for geotechnical codes using HuggingFace Transformers and RAG principles.
+**Hands-On:** Call a model from Python, build a retrieval-augmented generation pipeline over site investigation reports, and run a tool-using agent that reads a report and checks a bearing capacity.
 
 **Materials**
 - Slides: [Large language models](07-llm/07-llm-slides.pdf)
-- Notebook: [Direct API calls](07-llm/07a-llm-bearing-capacity-direct.ipynb)
-- Notebook: [Multi-agent calculator](07-llm/07b-llm-bearing-capacity-agents.ipynb)
-- Notebook: [RAG over geotechnical reports](07-llm/07c-llm-rag-geotechnical.ipynb)
+- Notebook: [One API call](07-llm/07a-llm-api-call.ipynb)
+- Notebook: [RAG over geotechnical reports](07-llm/07b-llm-rag-geotechnical.ipynb)
+- Notebook: [Report-reading agent](07-llm/07c-llm-report-agent.ipynb)
 
 ### Module 9: Physics Informed Neural Networks and Operator Learning
 

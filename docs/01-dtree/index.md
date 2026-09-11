@@ -1,15 +1,18 @@
-# Modules 1 and 2: Data and Tree-Based Classification
+# 1. Data and Tree-Based Classification
+
+Syllabus: Modules 1 and 2, Day 1.
 
 These modules cover exploratory data analysis of geotechnical datasets and tree-based
 classifiers: decision trees, random forests, and XGBoost. The running example is lateral
 spreading from the 2011 Christchurch earthquake. Explainability of these models continues
-in [Module 3](../02-xai/index.md).
+in [Chapter 2](../02-xai/index.md).
 
 ## Slides
 
 - [Introduction and exploratory analysis lecture deck](01-intro-eda-slides.pdf)
 - [Exploratory data analysis](01-eda-slides.pdf)
-- [Tree-based classification](01-classification-slides.pdf)
+- [Handout: limitations of machine learning in geotechnics](01-ml-limitations-handout.pdf): class
+  imbalance, data leakage, and misuse of SHAP, with a checklist to apply to the models in this chapter.
 
 ## Notebooks
 
@@ -26,4 +29,7 @@ completed notebook.
 - [RF_YN_Model3.csv](RF_YN_Model3.csv): lateral spreading observations from Durante and
   Rathje (2021), Christchurch earthquake. Features are groundwater depth GWD (m),
   distance to the free face L (km), ground Slope (%), and peak ground acceleration
-  PGA (g). The target is binary: 0 for no spreading, 1 for spreading.
+  PGA (g). The target is binary: 0 for no spreading, 1 for spreading. The file also holds
+  `Test ID` and `Elevation`, both dropped before modelling: `Test ID` is an identifier, and
+  202 of the 7,291 `Elevation` values are the float32 no-data marker -3.40282e+22 rather
+  than a measurement.

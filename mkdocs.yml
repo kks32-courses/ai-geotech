@@ -127,23 +127,23 @@ extra_css:
 
 nav:
   - Home: index.md
-  - Decision Trees and Random Forests:
+  - "1. Decision Trees and Random Forests":
     - 01-dtree/index.md
-    - Exploratory data analysis: 01-dtree/01a-eda-liquefaction.ipynb
-    - Decision tree, random forest, XGBoost: 01-dtree/01b-classification.ipynb
+    - "1a. Exploratory data analysis": 01-dtree/01a-eda-liquefaction.ipynb
+    - "1b. Decision tree, random forest, XGBoost": 01-dtree/01b-classification.ipynb
     - Exercises:
-      - Exploratory data analysis: 01-dtree/01a-eda-liquefaction-exercise.ipynb
-      - Classification: 01-dtree/01b-classification-exercise.ipynb
-  - Explainable AI:
+      - "1a. Exploratory data analysis": 01-dtree/01a-eda-liquefaction-exercise.ipynb
+      - "1b. Classification": 01-dtree/01b-classification-exercise.ipynb
+  - "2. Explainable AI":
     - 02-xai/index.md
-    - Explainable Boosting Machine: 02-xai/02a-ebm.ipynb
-    - Exercise: 02-xai/02a-ebm-exercise.ipynb
-  - Multi-Layer Perceptron:
+    - "2a. Explainable Boosting Machine": 02-xai/02a-ebm.ipynb
+    - "2a. Explainable Boosting Machine (exercise)": 02-xai/02a-ebm-exercise.ipynb
+  - "3. Multi-Layer Perceptron":
     - 03-mlp/index.md
-    - MLP classification: 03-mlp/03a-mlp-classification.ipynb
-    - MLP pile capacity: 03-mlp/03b-mlp-pile-capacity.ipynb
-    - MLP function approximation: 03-mlp/03c-mlp-function-approximation.ipynb
-    - MLP extrapolation: 03-mlp/03d-mlp-extrapolation.ipynb
+    - "3a. MLP classification": 03-mlp/03a-mlp-classification.ipynb
+    - "3b. MLP pile capacity": 03-mlp/03b-mlp-pile-capacity.ipynb
+    - "3c. MLP function approximation": 03-mlp/03c-mlp-function-approximation.ipynb
+    - "3d. MLP extrapolation": 03-mlp/03d-mlp-extrapolation.ipynb
     - Theory:
       - Universal approximation theorem: 03-mlp/uat.md
       - Activation function ReLU: 03-mlp/relu.md
@@ -151,43 +151,43 @@ nav:
       - Automatic differentiation: 03-mlp/ad.md
       - Gradient descent: 03-mlp/sgd.md
     - Exercises:
-      - MLP classification: 03-mlp/03a-mlp-classification-exercise.ipynb
-      - MLP function approximation: 03-mlp/03c-mlp-function-approximation-exercise.ipynb
-      - MLP pile capacity: 03-mlp/03b-mlp-pile-capacity-exercise.ipynb
-  - Convolutional Neural Networks:
+      - "3a. MLP classification": 03-mlp/03a-mlp-classification-exercise.ipynb
+      - "3b. MLP pile capacity": 03-mlp/03b-mlp-pile-capacity-exercise.ipynb
+      - "3c. MLP function approximation": 03-mlp/03c-mlp-function-approximation-exercise.ipynb
+  - "4. Convolutional Neural Networks":
     - 04-cnn/index.md
-    - Soil image classification: 04-cnn/04a-cnn-soil-classification.ipynb
-    - FWI velocity inversion: 04-cnn/04b-cnn-fwi-velocity.ipynb
+    - "4a. Soil image classification": 04-cnn/04a-cnn-soil-classification.ipynb
+    - "4b. FWI velocity inversion": 04-cnn/04b-cnn-fwi-velocity.ipynb
     - Exercises:
-      - Soil image classification: 04-cnn/04a-cnn-soil-classification-exercise.ipynb
-      - FWI velocity inversion: 04-cnn/04b-cnn-fwi-velocity-exercise.ipynb
-  - Recurrent Networks and LSTM:
+      - "4a. Soil image classification": 04-cnn/04a-cnn-soil-classification-exercise.ipynb
+      - "4b. FWI velocity inversion": 04-cnn/04b-cnn-fwi-velocity-exercise.ipynb
+  - "5. Recurrent Networks and LSTM":
     - 05-lstm/index.md
-    - LSTM liquefaction: 05-lstm/05a-lstm-liquefaction.ipynb
-    - Exercise: 05-lstm/05a-lstm-liquefaction-exercise.ipynb
-  - Clustering:
+    - "5a. LSTM liquefaction": 05-lstm/05a-lstm-liquefaction.ipynb
+    - "5a. LSTM liquefaction (exercise)": 05-lstm/05a-lstm-liquefaction-exercise.ipynb
+  - "6. Clustering":
     - 06-clustering/index.md
-    - Fetch CPT data (DesignSafe API): 06-clustering/06a-fetch-cpt-data-dapi.ipynb
-    - Clustering analysis: 06-clustering/06b-clustering-analysis.ipynb
-    - Exercise: 06-clustering/06b-clustering-analysis-exercise.ipynb
-  - Large Language Models:
+    - "6a. Fetch CPT data (DesignSafe API)": 06-clustering/06a-fetch-cpt-data-dapi.ipynb
+    - "6b. Clustering analysis": 06-clustering/06b-clustering-analysis.ipynb
+    - "6b. Clustering analysis (exercise)": 06-clustering/06b-clustering-analysis-exercise.ipynb
+  - "7. Large Language Models":
     - 07-llm/index.md
-    - Direct API calls: 07-llm/07a-llm-bearing-capacity-direct.ipynb
-    - Multi-agent calculator: 07-llm/07b-llm-bearing-capacity-agents.ipynb
-    - RAG over geotechnical reports: 07-llm/07c-llm-rag-geotechnical.ipynb
+    - "7a. One API call": 07-llm/07a-llm-api-call.ipynb
+    - "7b. RAG over geotechnical reports": 07-llm/07b-llm-rag-geotechnical.ipynb
+    - "7c. Report-reading agent": 07-llm/07c-llm-report-agent.ipynb
     - Exercises:
-      - Direct API calls: 07-llm/07a-llm-bearing-capacity-direct-exercise.ipynb
-      - Multi-agent calculator: 07-llm/07b-llm-bearing-capacity-agents-exercise.ipynb
-      - RAG: 07-llm/07c-llm-rag-geotechnical-exercise.ipynb
-  - Physics-Informed Neural Networks:
+      - "7a. One API call": 07-llm/07a-llm-api-call-exercise.ipynb
+      - "7b. RAG over geotechnical reports": 07-llm/07b-llm-rag-geotechnical-exercise.ipynb
+      - "7c. Report-reading agent": 07-llm/07c-llm-report-agent-exercise.ipynb
+  - "8. Physics-Informed Neural Networks":
     - 08-pinn/index.md
-    - PINN oscillator: 08-pinn/08a-pinn.ipynb
-    - 1D wave equation (PINN vs FD): 08-pinn/08b-pinn-forward.ipynb
-    - 1D consolidation: 08-pinn/08c-1d-consolidation-pinns.ipynb
-    - 1D consolidation (L-BFGS): 08-pinn/08d-1d-consolidation-pinns-lbfgs.ipynb
+    - "8a. PINN oscillator": 08-pinn/08a-pinn.ipynb
+    - "8b. 1D wave equation (PINN vs FD)": 08-pinn/08b-pinn-forward.ipynb
+    - "8c. 1D consolidation": 08-pinn/08c-1d-consolidation-pinns.ipynb
+    - "8d. 1D consolidation (L-BFGS)": 08-pinn/08d-1d-consolidation-pinns-lbfgs.ipynb
     - Exercises:
-      - PINN: 08-pinn/08a-pinn-exercise.ipynb
-      - 1D consolidation: 08-pinn/08c-1d-consolidation-pinns-exercise.ipynb
+      - "8a. PINN": 08-pinn/08a-pinn-exercise.ipynb
+      - "8c. 1D consolidation": 08-pinn/08c-1d-consolidation-pinns-exercise.ipynb
 
 copyright: |
   &copy; 2025 <a href="https://github.com/kks32-courses"  target="_blank" rel="noopener">Krishna Kumar</a>

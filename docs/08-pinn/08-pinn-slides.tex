@@ -90,7 +90,7 @@ University of Texas at Austin \\
 
 \vspace{1cm}
 \centering
-\href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/01-pinn/pinn.ipynb}{\beamergotobutton{Open Notebook: PINN}}
+\href{https://colab.research.google.com/github/kks32-courses/ai-geotech/blob/main/docs/08-pinn/08a-pinn.ipynb}{\beamergotobutton{Open Notebook: PINN}}
 
 \end{frame}
 
@@ -223,10 +223,10 @@ The hyperparameter $\lambda$ balances the two terms.
 \textbf{Critical Question:} How do we compute $\frac{d\hat{u}_\theta}{dt}$ and $\frac{d^2\hat{u}_\theta}{dt^2}$?
 
 \begin{alertblock}{Answer: Automatic Differentiation}
-AD provides \textbf{exact} derivatives of the neural network output with respect to its input, by applying the chain rule through the computational graph.
+AD gives the \textbf{exact derivative of the network}, to machine precision, by applying the chain rule through the computational graph. The network is still an approximation of the true solution, so the PINN still carries approximation and optimisation error.
 \begin{itemize}
-    \item No finite difference errors.
-    \item Computationally efficient (especially reverse-mode AD).
+    \item No finite difference stencil and no truncation error in the derivative.
+    \item Reverse mode is the cheap way to get the gradient with respect to the parameters; for the derivative of one output with respect to one input, forward mode costs less.
     \item Built into modern frameworks (PyTorch, TensorFlow, JAX).
 \end{itemize}
 \end{alertblock}
@@ -262,7 +262,7 @@ The Sobolev norm $\|u\|_{H^k}^2 = \sum_{|\alpha| \leq k} \|D^\alpha u\|_{L^2}^2$
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{figs/pinn-nn-comparison.png}
-	\caption*{Placeholder for the comparison plot from the notebook.}
+	\caption*{Left: displacement against time. Both networks pass through the ten training points, which stop at $t = 0.36$; beyond them the standard network flattens out while the PINN tracks the true solution. Right: absolute error on a log scale.}
 \end{figure}
 
 \textbf{Observation:}
@@ -320,12 +320,9 @@ with Dirichlet boundary conditions (BCs):
 \begin{equation*}
 u(0) = 0 \quad \text{and} \quad u(1) = 0
 \end{equation*}
+The exact solution is $u(x) = \frac{1}{\pi}\sin(\pi x)$: the coefficient $\pi$ in the source term, rather than $\pi^2$, sets the amplitude to $1/\pi \approx 0.32$, the value on the comparison plot later.
 
 \textbf{Goal:} Train a PINN to find the solution using only the governing equation and its BCs.
-
-\vspace{1cm}
-\centering
-\href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/01-pinn/poisson.ipynb}{\beamergotobutton{Open Notebook: 1D Poisson}}
 
 \end{frame}
 
@@ -422,11 +419,6 @@ The distance function $D(x)$ is zero at the boundaries, forcing $\tilde{u}(x)$ t
 \end{itemize}
 \end{block}
 
-\vspace{1em}
-\centering
-\href{https://colab.research.google.com/github/kks32-courses/ut-portugal-sciml/blob/main/docs/01-pinn/inverse-heat.ipynb}{\beamergotobutton{Open Notebook: Inverse Heat}}
-
-
 \end{frame}
 
 %------------------------------------------------
@@ -435,7 +427,7 @@ The distance function $D(x)$ is zero at the boundaries, forcing $\tilde{u}(x)$ t
 	
 	\begin{figure}[ht]
 		\centering
-		\includegraphics[width=0.75\textwidth]{figs/inverse-heat-diffusivity.png}
+		\includegraphics[width=0.75\textwidth]{figs/inverse-heat-conductivity.png}
 	\end{figure}
 	
 \end{frame}
@@ -450,7 +442,7 @@ The distance function $D(x)$ is zero at the boundaries, forcing $\tilde{u}(x)$ t
 \begin{equation*}
 -k \frac{d^2T}{dx^2} = f(x)
 \end{equation*}
-Here, the thermal diffusivity $k$ is \textbf{unknown}.
+Here, the thermal conductivity $k$ is \textbf{unknown}. The diffusivity $\alpha = k/(\rho c_p)$ belongs to the transient equation, not to this one.
 
 \textbf{PINN Framework:}
 \begin{itemize}
@@ -488,7 +480,7 @@ where the physics loss now includes the trainable parameter $\hat{k}$:
 \begin{minipage}[t]{0.48\textwidth}
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=\linewidth]{figs/inverse-heat-diffusivity.png}
+	\includegraphics[width=\linewidth]{figs/inverse-heat-conductivity.png}
 	\caption*{Parameter convergence and temperature field reconstruction.}
 \end{figure}
 \end{minipage}

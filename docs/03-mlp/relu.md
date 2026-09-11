@@ -1,12 +1,37 @@
 # ReLU and the importance of non-linear transformation
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Interactive Neural Net Transformation</title>
+## Definition
+
+The rectified linear unit is
+
+$$\mathrm{ReLU}(x) = \max(0, x).$$
+
+Its derivative is 1 for $x > 0$ and 0 for $x < 0$. At $x = 0$ the derivative does not exist, because the left and right limits are 0 and 1. Any value in $[0, 1]$ is a subgradient there. PyTorch's `torch.relu` returns the subgradient 0, which is a convention and not a derivative. The choice almost never matters in training, because a pre-activation lands exactly on 0 with probability zero for continuous inputs.
+
+The leaky variant replaces the flat side with a small slope,
+
+$$f(y) = \max(\alpha y, y),$$
+
+with $0 \le \alpha < 1$. Setting $\alpha = 0$ recovers ReLU. Setting $\alpha = 1$ gives the identity, which is linear and therefore useless as an activation.
+
+## Dead units
+
+A unit is dead when its pre-activation $w^{\mathsf{T}}x + b$ is negative at every training point. Then $\mathrm{ReLU}$ outputs 0 on all of them, the derivative is 0 on all of them, and the gradient of the loss with respect to $w$ and $b$ is identically zero. Plain gradient descent never changes those weights again, so the unit stays dead for the rest of training. A large learning rate causes this by pushing a bias far negative in one step. Leaky ReLU avoids it, because $\alpha > 0$ keeps a nonzero gradient on the negative side.
+
+## Why ReLU replaced sigmoid in deep networks
+
+The sigmoid $\sigma(z) = 1/(1 + e^{-z})$ has derivative $\sigma'(z) = \sigma(z)(1 - \sigma(z))$, which is largest at $z = 0$ where it equals $1/4$. Backpropagation through $L$ sigmoid layers multiplies $L$ such factors, so the gradient reaching the first layer is at most $4^{-L}$ times the gradient at the output. At $L = 10$ that factor is about $10^{-6}$. The early layers stop moving.
+
+ReLU has derivative exactly 1 on the active side, so the product of $L$ such factors is 1 whenever every unit on the path is active. The gradient neither shrinks nor grows through depth along an active path. The price is the dead units above.
+
+## Why a non-linearity is needed at all
+
+Composing two linear maps gives one linear map: $W_2(W_1 x + b_1) + b_2 = (W_2 W_1) x + (W_2 b_1 + b_2)$. Stacking layers without an activation adds no expressive power. The demo below makes this concrete. The rotation and scaling are invertible, so they cannot change whether the two classes are linearly separable. Only the ReLU can, by clamping part of the plane to an axis and folding the data.
+
+## Interactive transformation demo
+
 <!-- 1. Load Plotly.js from a CDN -->
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
 
 <!-- 2. CSS for Styling the Application -->
 <style>
@@ -191,12 +216,9 @@
         font-weight: bold;
     }
 </style>
-</head>
-<body>
 
 <div id="interactive-nn-container">
-    <h2>Interactive Transformation Demo</h2>
-    <p>Adjust the sliders to see how a linear (rotation + scaling) and non-linear (ReLU) transformation can make data separable. Or, press "Solve" to see a working solution.</p>
+    <p>Adjust the sliders to see how a linear map and a non-linear one act on the same points. Press "Solve" for a setting that separates the classes. The rotation and the scaling are invertible, so they change nothing about separability. Their only job is to decide which points the ReLU clamps to zero.</p>
 
     <!-- Controls -->
     <div class="nn-controls">
@@ -209,8 +231,8 @@
             <input type="range" id="nn-scaleSlider" min="0.5" max="3" value="1.0" step="0.05">
         </div>
         <div class="nn-slider-group">
-            <label for="nn-reluSlider">ReLU Negative Slope: <span id="nn-reluValue">0.00</span></label>
-            <input type="range" id="nn-reluSlider" min="0" max="1" value="1.0" step="0.01">
+            <label for="nn-reluSlider">Negative slope α: <span id="nn-reluValue">0.00</span></label>
+            <input type="range" id="nn-reluSlider" min="0" max="1" value="0" step="0.01">
         </div>
         <button id="nn-solveButton" class="nn-solve-button">Solve</button>
     </div>
@@ -225,7 +247,7 @@
         <div class="nn-equations-content" id="nn-equationsContent">
             <div class="nn-equation">
                 <div class="nn-equation-title">1. Linear Transformation:</div>
-                <div><strong>Y = W<sup>T</sup>X + b</strong></div>
+                <div><strong>Y = WX + b</strong></div>
                 <div style="margin-top: 8px; font-size: 14px; color: #6c757d;">
                     Where W is the transformation matrix (rotation + scaling) and b is the bias (set to 0 here)
                 </div>
@@ -236,13 +258,14 @@
             </div>
             
             <div class="nn-equation">
-                <div class="nn-equation-title">2. Non-linear Transformation (Leaky ReLU):</div>
+                <div class="nn-equation-title">2. Non-linear Transformation:</div>
                 <div><strong>Z = f(Y) = max(αY, Y)</strong></div>
                 <div style="margin-top: 8px; font-size: 14px; color: #6c757d;">
-                    Where α is the negative slope parameter: <span id="nn-alphaValue">1.00</span>
+                    Where α is the negative slope parameter: <span id="nn-alphaValue">0.00</span>
                 </div>
                 <div style="margin-top: 8px; font-size: 12px; color: #6c757d;">
-                    Applied element-wise: f(y) = y if y > 0, else α × y
+                    Applied element-wise: f(y) = y if y > 0, else α × y.
+                    α = 0 is ReLU, 0 &lt; α &lt; 1 is leaky ReLU, and α = 1 is the identity.
                 </div>
             </div>
         </div>
@@ -256,7 +279,7 @@
             <div id="nn-plotX"></div>
         </div>
         <div class="nn-plot-container">
-            <div class="nn-plot-title">2. After Linear Transform (Y = W<sup>T</sup>X)</div>
+            <div class="nn-plot-title">2. After Linear Transform (Y = WX)</div>
             <div id="nn-plotY"></div>
         </div>
         <div class="nn-plot-container">
@@ -445,6 +468,3 @@ This combines:
         }
     })();
 </script>
-
-</body>
-</html>

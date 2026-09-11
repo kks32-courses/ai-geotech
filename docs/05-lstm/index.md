@@ -1,4 +1,6 @@
-# Module 6: Recurrent Networks and LSTM
+# 5. Recurrent Networks and LSTM
+
+Syllabus: Module 6, Day 3.
 
 This module predicts the pore pressure response of liquefiable sand under cyclic
 loading with a long short-term memory network. Saturated soil loaded cyclically during
@@ -23,9 +25,10 @@ completed notebook.
 ## Data
 
 Cyclic simple shear tests on Nevada sand from Kwan et al. (2017), in the directories
-`Experiment-8/` and `Experiment-9/`, also packaged as [data.zip](data.zip). Loose
-samples have relative density 33 to 55 percent and dense samples 72 to 94 percent.
-Loading is harmonic, modulated up, or modulated down.
+`Experiment-8/` and `Experiment-9/`, also packaged as [data.zip](data.zip). The
+Experiment-9 samples are loose, with relative density 33 to 55 percent, and the
+Experiment-8 samples are dense, with 72 to 94 percent. Loading is harmonic, modulated
+up, or modulated down.
 
 Each CSV holds these columns:
 
@@ -35,16 +38,25 @@ Each CSV holds these columns:
 - Effective Vertical Stress [kPa]
 - Excess Pore Pressure [kPa]
 
-The notebook computes relative density Dr [%] and the pore pressure ratio
-ru = excess pore pressure / confining pressure.
+The notebook adds two more columns. Relative density Dr [%] is read from line 2 of the
+CSV header, which states the range for the whole experiment series rather than a
+per-trial value, so the notebook takes the midpoint: 83 percent for Experiment 8 and 44
+percent for Experiment 9. The pore pressure ratio is ru = excess pore pressure /
+confining pressure. The notebook then prepends 900 rows of static state, at the
+record's own sampling interval, before any windowing, so every record grows by 900
+steps and every window index shifts with it.
 
 ## Network
 
-The input is a window of 800 time steps with three channels: normalized time,
-normalized shear stress, and relative density. The window spans about two loading
-cycles. The stack is two LSTM layers of 128 units, then dense layers of 64 and 16
-units with tanh activations, then a single tanh output. The target is ru at the time
-step after the window.
+The input is a window of 800 time steps with three channels: time divided by a fixed
+600 s, shear stress divided by the confining pressure, and relative density. The
+window spans 10.4 s at the median sampling interval of 0.013 s, which is about two
+loading cycles for the Experiment-8 records near 0.20 Hz and roughly four to ten
+cycles for the Experiment-9 transient records. The stack is two LSTM layers of 128
+units, then dense layers of 64 and 16 units with tanh activations, then a single tanh
+output. The target is ru at the time step after the window. Validation holds out two
+whole training trials, chosen before windowing, because consecutive windows share 799
+of their 800 steps.
 
 ## References
 
