@@ -336,3 +336,7 @@ TSWLatexianTemp*
 # local site build, RAG vector store
 site/
 chroma_db/
+
+# per-user Claude Code files
+CLAUDE.md
+.claude/
