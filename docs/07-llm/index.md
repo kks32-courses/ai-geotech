@@ -6,8 +6,9 @@ This chapter goes from one API call, to retrieval over four site investigation r
 to a small agent that reads a report, finds the soil parameters, and checks a bearing
 capacity with a calculation tool.
 
-The notebooks run on Google Colab with the key stored as a Colab secret named
-`OPENAI_API_KEY`, or locally with the key in a `.env` file in this folder.
+The notebooks run on Google Colab. Store the key as a Colab secret named `OPENAI_API_KEY`
+(the key icon in the left toolbar), or locally in a `.env` file in this folder. Each notebook
+opens with the steps.
 
 ## Slides
 
